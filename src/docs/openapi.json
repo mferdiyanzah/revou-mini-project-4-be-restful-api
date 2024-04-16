@@ -1,0 +1,104 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "CinePrime",
+    "description": "CinePrime is the best itw",
+    "version": "1.0.0",
+    "contact": {}
+  },
+  "servers": [
+    {
+      "url": "localhost:3000/api/v1"
+    }
+  ],
+  "paths": {
+    "/user/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Login",
+        "description": "Login a user",
+        "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": {
+                    "type": "string",
+                    "example": "user 2"
+                  },
+                  "username": {
+                    "type": "string",
+                    "example": "user 2"
+                  }
+                }
+              },
+              "examples": {
+                "Login": {
+                  "value": {
+                    "password": "user 2",
+                    "username": "user 2"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "201 Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number",
+                      "example": 200
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "type": "string",
+                          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImVtYWlsIjoidXNlcjJAbWFpbC5jb20iLCJpYXQiOjE3MTMyNDU0MDAsImV4cCI6MTcxMzI0OTAwMH0.80wDna7zEJb534FMVJGK8Tz5n4RS8oc10q_3MmLldmw"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User logged in successfully"
+                    }
+                  }
+                },
+                "examples": {
+                  "201 Created": {
+                    "value": {
+                      "code": 201,
+                      "data": {
+                        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImVtYWlsIjoidXNlcjJAbWFpbC5jb20iLCJpYXQiOjE3MTMyNDU0MDAsImV4cCI6MTcxMzI0OTAwMH0.80wDna7zEJb534FMVJGK8Tz5n4RS8oc10q_3MmLldmw"
+                      },
+                      "message": "User logged in successfully"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "This is for auth"
+    },
+    {
+      "name": "Movies"
+    }
+  ]
+}
