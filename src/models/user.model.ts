@@ -1,6 +1,6 @@
 interface UserModel {
   id: number;
-  name: string;
+  username: string;
   email: string;
   password: string;
 }
@@ -17,8 +17,14 @@ interface UserLoginRequest {
   password: string;
 }
 
+interface UserFindByEmailRequest {
+  email: string;
+  username: string;
+}
+
 export {
   UserModel,
   UserRegisterRequest,
-  UserLoginRequest
+  UserLoginRequest,
+  UserFindByEmailRequest
 }

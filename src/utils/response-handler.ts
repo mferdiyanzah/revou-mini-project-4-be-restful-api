@@ -1,20 +1,7 @@
-const success = (message: string, data: any, code: number) => {
-  return {
-    message,
-    code,
-    data,
-  };
-}
+import { Response } from 'express';
 
-const error = (message: string, code: number) => {
-  return {
-    message,
-    code,
-  };
-}
+const responseHandler = (res: Response, code: number, message: string, success: boolean, data?: any | null,): void => {
+  res.status(code).json({ success, code, message, data, });
+};
 
-export {
-  success,
-  error,
-}
-
+export default responseHandler;

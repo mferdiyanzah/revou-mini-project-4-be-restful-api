@@ -1,7 +1,5 @@
-import UserRepository from "./user.repository";
-import MovieRepository from "./movie.repository";
+import userRepository from "./user.repository";
 
 export {
-  UserRepository,
-  MovieRepository
+  userRepository,
 }

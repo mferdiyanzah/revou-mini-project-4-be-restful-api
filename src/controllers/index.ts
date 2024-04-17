@@ -1,7 +1,7 @@
-import UserController from "./user.controller";
-import MovieController from "./movie.controller";
+import userController from "./user.controller";
+// import MovieController from "./movie.controller";
 
 export {
-  UserController,
-  MovieController
+  userController,
+  // MovieController
 }

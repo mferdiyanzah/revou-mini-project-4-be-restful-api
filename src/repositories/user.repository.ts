@@ -1,54 +1,51 @@
-import { RowDataPacket } from 'mysql2';
-import connection from '../libs/db';
-import { UserRegisterRequest } from '../models/user.model';
+import { ResultSetHeader, RowDataPacket } from "mysql2";
+import connection from "../libs/db";
+import { UserModel, UserRegisterRequest } from "../models/user.model";
 
-const UserRepository = () => {
-  const register = async (user: UserRegisterRequest): Promise<RowDataPacket> => {
-    return new Promise((resolve, reject) => {
-      const query = `INSERT INTO users (email, password, username) VALUES (?, ?, ?)`;
-      const values = [user.email, user.password, user.username];
+const register = async (user: UserRegisterRequest): Promise<number> => {
+  return new Promise((resolve, reject) => {
+    const query = `INSERT INTO users (email, password, username) VALUES (?, ?, ?)`;
+    const values = [user.email, user.password, user.username];
 
-      connection.query<RowDataPacket[]>(query, values, (err, results) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(results[0]);
-        }
-      });
+    connection.query<ResultSetHeader>(query, values, (err, results) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(results.insertId);
+      }
     });
-  }
+  });
+}
 
-  const findByEmail = async (email: string) => {
-    try {
-      const sqlQuery = `SELECT * FROM users WHERE email = ?`;
-      const sqlParams = [email];
+const findUserByEmail = async (email: string): Promise<UserModel | null> => {
+  return new Promise((resolve, reject) => {
+    const query = `SELECT * FROM users WHERE email = ?`;
+    const values = [email];
 
-      // const results = await executeQuery(sqlQuery, sqlParams) as any[];
-      // return results[0];
-      return 0;
-    } catch (err) {
-      throw err;
-    }
-  }
+    connection.query<RowDataPacket[]>(query, values, (err, results) => {
+      if (err) {
+        reject(err);
+      }
 
-  const login = async (email: string, password: string) => {
-    try {
-      const sqlQuery = `SELECT * FROM users WHERE email = ? AND password = ?`;
-      const sqlParams = [email, password];
+      if (results.length === 0) {
+        resolve(null);
+        return;
+      }
 
-      // const results = await executeQuery(sqlQuery, sqlParams) as mysql.OkPacket[];
-      // return results[0];
-      return 0;
-    } catch (err) {
-      throw err;
-    }
-  }
+      const user: UserModel = {
+        id: results[0].id,
+        email: results[0].email,
+        password: results[0].password,
+        username: results[0].username
+      };
+      resolve(user);
+    });
+  });
+}
 
-  return {
-    register,
-    findByEmail,
-    login
-  }
+const userRepository = {
+  register,
+  findUserByEmail
 };
 
-export default UserRepository;
+export default userRepository;
