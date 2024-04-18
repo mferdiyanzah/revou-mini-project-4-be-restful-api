@@ -1,7 +1,4 @@
 import userService from "./user.service";
-// import MovieService from "./movie.service";
+import movieService from "./movie.service";
 
-export {
-  userService,
-  // MovieService
-}
+export { userService, movieService };

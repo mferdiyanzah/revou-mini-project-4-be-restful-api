@@ -1,5 +1,4 @@
 import userRepository from "./user.repository";
+import movieRepository from "./movie.repository";
 
-export {
-  userRepository,
-}
+export { userRepository, movieRepository };

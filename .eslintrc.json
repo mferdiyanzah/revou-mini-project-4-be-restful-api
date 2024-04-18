@@ -1,0 +1,80 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "node": true
+    },
+    "parser": "@typescript-eslint/parser",
+    "extends": [
+        "standard-with-typescript",
+        "prettier"
+    ],
+    // "plugins": [
+    //     "prettier"
+    // ],
+    "overrides": [],
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "project": "./tsconfig.json"
+    },
+    "rules": {
+        // "prettier/prettier": [
+        //     "error",
+        //     {
+        //         "endOfLine": "auto",
+        //         "bracketSpacing": "off"
+        //     }
+        // ],
+        "@typescript-eslint/no-misused-promises": [
+            "error",
+            {
+                "checksVoidReturn": false
+            }
+        ],
+        "object-curly-spacing": "off",
+        "import/order": [
+            "error",
+            {
+                "groups": [
+                    "builtin",
+                    "external",
+                    "internal",
+                    "parent",
+                    "sibling",
+                    "index"
+                ],
+                "pathGroups": [
+                    {
+                        "pattern": "express",
+                        "group": "external",
+                        "position": "before"
+                    }
+                ],
+                "pathGroupsExcludedImportTypes": [
+                    "express"
+                ],
+                "newlines-between": "always",
+                "alphabetize": {
+                    "order": "asc",
+                    "caseInsensitive": true
+                }
+            }
+        ],
+        "semi": [
+            2,
+            "always"
+        ],
+        "@typescript-eslint/naming-convention": [
+            "error",
+            {
+                "selector": "variable",
+                "format": [
+                    "camelCase",
+                    "UPPER_CASE",
+                    "PascalCase",
+                    "snake_case"
+                ]
+            }
+        ]
+    }
+}

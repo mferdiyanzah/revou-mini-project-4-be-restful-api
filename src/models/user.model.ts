@@ -22,9 +22,9 @@ interface UserFindByEmailRequest {
   username: string;
 }
 
-export {
+export type {
   UserModel,
   UserRegisterRequest,
   UserLoginRequest,
-  UserFindByEmailRequest
-}
+  UserFindByEmailRequest,
+};
