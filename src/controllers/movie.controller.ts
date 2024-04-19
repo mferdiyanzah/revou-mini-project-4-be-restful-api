@@ -1,4 +1,6 @@
 import { type Request, type Response } from "express";
+
+import { type UpdateMovieRequest, type AddMovieRequest } from "../models/movie.model";
 import { movieService } from "../services";
 import responseHandler from "../utils/response-handler";
 
@@ -49,7 +51,7 @@ const addNewMovie = async (req: Request, res: Response): Promise<void> => {
   try {
     const movie = req.body;
 
-    const movieId = await movieService.addNewMovie(movie);
+    const movieId = await movieService.addNewMovie(movie as AddMovieRequest);
 
     responseHandler(res, 201, "Created", true, { id: movieId });
   } catch (er) {
@@ -57,7 +59,7 @@ const addNewMovie = async (req: Request, res: Response): Promise<void> => {
       responseHandler(res, 400, er.message, false);
     }
   }
-}
+};
 
 const getMoviesNowPlaying = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -72,11 +74,43 @@ const getMoviesNowPlaying = async (req: Request, res: Response): Promise<void> =
   }
 };
 
+const updateMovieById = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const movie = req.body;
+
+    const { id } = req.params;
+
+    await movieService.updateMovieById(id, movie as UpdateMovieRequest);
+
+    responseHandler(res, 200, "OK", true);
+  } catch (er) {
+    if (er instanceof Error) {
+      responseHandler(res, 400, er.message, false);
+    }
+  }
+};
+
+const deleteMovieById = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    await movieService.deleteMovieById(id);
+
+    responseHandler(res, 200, "OK", true);
+  } catch (er) {
+    if (er instanceof Error) {
+      responseHandler(res, 400, er.message, false);
+    }
+  }
+};
+
 const movieController = {
   getMovies,
   getMovieById,
   getMoviesNowPlaying,
   addNewMovie,
+  updateMovieById,
+  deleteMovieById,
 };
 
 export default movieController;

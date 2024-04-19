@@ -10,11 +10,11 @@ interface MovieModel {
   duration: number;
   rating: string;
   overview: string;
-}
+};
 
 interface MovieDetailResponse extends MovieModel {
   actors: string[];
-}
+};
 
 interface GetAllMoviesQuery {
   limit: number;
@@ -23,7 +23,7 @@ interface GetAllMoviesQuery {
   sort: "asc" | "desc";
 }
 
-interface GetAllMoviesResponse extends GenericPaginationResponse<MovieModel> { }
+interface GetAllMoviesResponse extends GenericPaginationResponse<MovieModel> { };
 
 interface AddMovieRequest {
   title: string;
@@ -34,20 +34,23 @@ interface AddMovieRequest {
   rating: string;
   overview: string;
   actors: number[];
-}
+};
 
 interface GetAllMoviesNowPlayingQueryResult extends MovieModel {
   show_time: string;
   show_time_id: number;
-}
+};
 
 interface GetAllMoviesNowPlayingResponse extends MovieModel {
   show_time: MovieShowModel[];
-}
+};
+
+interface UpdateMovieRequest extends AddMovieRequest { }
 
 export type {
   AddMovieRequest, GetAllMoviesNowPlayingQueryResult,
   GetAllMoviesNowPlayingResponse, GetAllMoviesQuery,
-  GetAllMoviesResponse, MovieDetailResponse, MovieModel
+  GetAllMoviesResponse, MovieDetailResponse, MovieModel,
+  UpdateMovieRequest,
 };
 

@@ -1,4 +1,5 @@
 import {
+  type UpdateMovieRequest,
   type AddMovieRequest,
   type GetAllMoviesResponse,
   type MovieModel,
@@ -42,11 +43,21 @@ const getMoviesNowPlaying = async (): Promise<GetAllMoviesResponse[]> => {
   return movies;
 };
 
+const updateMovieById = async (id: string, movie: UpdateMovieRequest): Promise<void> => {
+  await movieRepository.updateMovieById(id, movie);
+};
+
+const deleteMovieById = async (id: string): Promise<void> => {
+  await movieRepository.deleteMovieById(id);
+};
+
 const movieService = {
   getMovies,
   getMovieById,
   getMoviesNowPlaying,
   addNewMovie,
+  deleteMovieById,
+  updateMovieById,
 };
 
 export default movieService;

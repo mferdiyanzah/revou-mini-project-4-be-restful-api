@@ -1,4 +1,5 @@
 import { type Request, type Response } from "express";
+
 import { userService } from "../services";
 import responseHandler from "../utils/response-handler";
 
