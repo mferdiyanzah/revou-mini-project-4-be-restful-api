@@ -46,8 +46,13 @@ const getBookingHistory = async (userId: string): Promise<BookingHistory[]> => {
   return bookings;
 };
 
+const updateExpiredBooking = async (): Promise<number> => {
+  const result = await bookingRepository.updateExpiredBooking();
+  return result;
+};
+
 const bookingService = {
-  addBooking, updateBookingStatus, getBookingHistory
+  addBooking, updateBookingStatus, getBookingHistory, updateExpiredBooking,
 };
 
 export default bookingService;

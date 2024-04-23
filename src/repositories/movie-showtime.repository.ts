@@ -43,10 +43,23 @@ const updateShowTime = async (request: UpdateMovieShowRequest): Promise<number> 
   return result.affectedRows;
 };
 
+const updateExpiredBookingSeat = async (id: number): Promise<number> => {
+  const query = `
+    UPDATE showtime_seats
+    SET status = 'available'
+    WHERE id = ?;
+  `;
+  const values = [id];
+
+  const [result] = await pool.query<ResultSetHeader>(query, values);
+  return result.affectedRows;
+};
+
 const movieShowTimeRepository = {
   addShowTime,
   deleteShowTime,
   updateShowTime,
+  updateExpiredBookingSeat,
 };
 
 export default movieShowTimeRepository;

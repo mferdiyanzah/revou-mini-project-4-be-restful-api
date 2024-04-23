@@ -2,12 +2,15 @@ import { type Request, type Response } from 'express';
 
 import { type UpdateMovieShowRequest, type MovieShowRequest } from '../models/movie-show.model';
 import { movieShowTimeService } from '../services';
+import { validateRequest } from '../utils/global';
 import responseHandler from '../utils/response-handler';
 
 const addShowTime = async (req: Request, res: Response): Promise<void> => {
   try {
     const request = req.body as MovieShowRequest;
-    const isRequestValid = request.movie_id !== null && request.price !== null && request.show_time !== null;
+    const requiredKeys = ['movie_id', 'price', 'show_time'];
+    const isRequestValid = validateRequest(requiredKeys, request);
+
     if (!isRequestValid) {
       responseHandler(res, 400, "Invalid request", false);
       return;

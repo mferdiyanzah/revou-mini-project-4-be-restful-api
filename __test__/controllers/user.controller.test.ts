@@ -47,6 +47,17 @@ describe('User Controller', () => {
       expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ data: { token: expectedToken }, }));
     });
 
+    it('should return 400 if request is invalid', async () => {
+      req.body = {};
+
+      await userController.register(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ message: 'Name, email, and password are required' }));
+    });
+  });
+
+  describe('login', () => {
     it('should login a user and return a token', async () => {
       const requestBody = {
         email: 'test@example.com',
@@ -64,6 +75,15 @@ describe('User Controller', () => {
 
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ data: { token: expectedToken }, }));
+    });
+
+    it('should return 400 if request is invalid', async () => {
+      req.body = {};
+
+      await userController.login(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ message: 'Email and password are required' }));
     });
   });
 });

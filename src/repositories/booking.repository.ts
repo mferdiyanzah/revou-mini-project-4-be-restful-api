@@ -62,10 +62,22 @@ const getBookingHistory = async (userId: string): Promise<BookingHistory[]> => {
   return bookings;
 };
 
+const updateExpiredBooking = async (): Promise<number> => {
+  const query = `
+    UPDATE bookings
+    SET status = 'expired'
+    WHERE status = 'pending' AND created_at < NOW() - INTERVAL 15 MINUTE;
+  `;
+
+  const [result] = await pool.query<ResultSetHeader>(query);
+  return result.affectedRows;
+};
+
 const bookingRepository = {
   addBooking,
   updateBookingStatus,
   getBookingHistory,
+  updateExpiredBooking,
 };
 
 export default bookingRepository;

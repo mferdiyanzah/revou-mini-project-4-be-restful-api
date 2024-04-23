@@ -3,7 +3,7 @@ import { type Request, type Response } from 'express';
 import { type JwtPayload } from 'jsonwebtoken';
 
 import { bookingService } from '../services';
-import { verifyToken } from '../utils/jwt';
+import { decodeToken } from '../utils/jwt';
 import responseHandler from '../utils/response-handler';
 
 const addBooking = async (req: Request, res: Response): Promise<void> => {
@@ -17,10 +17,10 @@ const addBooking = async (req: Request, res: Response): Promise<void> => {
     const authHeader = req.headers.authorization;
     const token = authHeader?.split(" ")[1];
 
-    const decoded: JwtPayload | string = verifyToken(String(token));
+    const decoded: JwtPayload | string = decodeToken(String(token));
 
     const bookingPayload = {
-      user_id: (decoded as JwtPayload)?.userId,
+      user_id: (decoded)?.userId,
       showtime_seat_id: requestBody.showtime_seat_id,
     };
 
@@ -59,9 +59,9 @@ const getBookingHistory = async (req: Request, res: Response): Promise<void> => 
     const authHeader = req.headers.authorization;
     const token = authHeader?.split(" ")[1];
 
-    const decoded: JwtPayload | string = verifyToken(String(token));
+    const decoded: JwtPayload | string = decodeToken(String(token));
 
-    const bookings = await bookingService.getBookingHistory((decoded as JwtPayload)?.userId as string);
+    const bookings = await bookingService.getBookingHistory(decoded?.userId as string);
 
     responseHandler(res, 200, "OK", true, bookings);
   } catch (er) {

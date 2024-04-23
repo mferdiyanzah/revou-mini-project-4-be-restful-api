@@ -3,6 +3,7 @@ import { type Request, type Response } from "express";
 import { type GenericPaginationRequest } from "../models/generic.model";
 import { type UpdateMovieRequest, type AddMovieRequest } from "../models/movie.model";
 import { movieService } from "../services";
+import { validateRequest } from "../utils/global";
 import responseHandler from "../utils/response-handler";
 
 const getMovies = async (req: Request, res: Response): Promise<void> => {
@@ -68,9 +69,10 @@ const getMovieById = async (req: Request, res: Response): Promise<void> => {
 const addNewMovie = async (req: Request, res: Response): Promise<void> => {
   try {
     const movie: AddMovieRequest = req.body;
+    const requiredKeys = ["title", "release_date", "director", "genre", "duration", "rating", "overview", "actors"];
+    const isRequestValid = validateRequest(requiredKeys, movie);
 
-    const isRequestValid = Object.values(movie).some((value) => value === undefined);
-    if (isRequestValid) {
+    if (!isRequestValid) {
       throw new Error("All fields are required");
     }
 
@@ -99,6 +101,11 @@ const getMoviesNowPlaying = async (req: Request, res: Response): Promise<void> =
 const updateMovieById = async (req: Request, res: Response): Promise<void> => {
   try {
     const movie: UpdateMovieRequest = req.body;
+
+    const isRequestValid = Object.values(movie).some((value) => value === undefined);
+    if (isRequestValid) {
+      throw new Error("All fields are required");
+    }
 
     const { id } = req.params;
 

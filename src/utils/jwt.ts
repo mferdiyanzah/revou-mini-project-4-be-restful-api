@@ -5,8 +5,14 @@ const generateToken = (userId: number, email: string): string => {
   return jwt.sign(payload, process.env.JWT_SECRET_KEY ?? "", { expiresIn: "1h", });
 };
 
+const decodeToken = (token: string): jwt.JwtPayload => {
+  return jwt.decode(token) as jwt.JwtPayload;
+};
+
 const verifyToken = (token: string): string | jwt.JwtPayload => {
   return jwt.verify(token, process.env.JWT_SECRET_KEY ?? "");
 };
 
-export { generateToken, verifyToken };
+export {
+  generateToken, verifyToken, decodeToken
+};
