@@ -3,4 +3,17 @@ interface MovieShowModel {
   show_time: string;
 }
 
-export type { MovieShowModel };
+interface MovieShowRequest {
+  movie_id: number;
+  price: number;
+  show_time: string;
+  status: 'upcoming' | 'now_showing' | 'past';
+}
+
+interface UpdateMovieShowRequest extends MovieShowRequest {
+  id: number;
+}
+
+export type {
+  MovieShowModel, MovieShowRequest, UpdateMovieShowRequest
+};

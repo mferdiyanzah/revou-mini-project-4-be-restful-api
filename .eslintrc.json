@@ -9,6 +9,7 @@
         "standard-with-typescript",
         "prettier"
     ],
+    "plugins": ["jest"],
     "overrides": [],
     "parserOptions": {
         "ecmaVersion": "latest",
@@ -70,6 +71,7 @@
                     "snake_case"
                 ]
             }
-        ]
+        ],
+        "@typescript-eslint/unbound-method": "off"
     }
 }

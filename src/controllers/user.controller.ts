@@ -22,9 +22,9 @@ const register = async (req: Request, res: Response): Promise<void> => {
       isAdmin: requestBody.is_admin,
     };
 
-    const userId = await userService.register(userRegisterRequest);
+    const token = await userService.register(userRegisterRequest);
 
-    responseHandler(res, 201, "Created", true, { userId });
+    responseHandler(res, 201, "Created", true, { token });
   } catch (er) {
     if (er instanceof Error) {
       responseHandler(res, 400, er.message, false);

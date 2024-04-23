@@ -1,12 +1,27 @@
 import { type Request, type Response } from "express";
 
+import { type GenericPaginationRequest } from "../models/generic.model";
 import { type UpdateMovieRequest, type AddMovieRequest } from "../models/movie.model";
 import { movieService } from "../services";
 import responseHandler from "../utils/response-handler";
 
 const getMovies = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { limit, page, order, sort } = req.query;
+    const { search, limit, page, order, sort } = req.query as {
+      search: string;
+      limit: string;
+      page: string;
+      order: string;
+      sort: string;
+    };
+
+    const limitNumber = Number(limit);
+    const pageNumber = Number(page);
+
+    if (isNaN(limitNumber) || isNaN(pageNumber)) {
+      responseHandler(res, 400, "Invalid limit or page", false);
+      return;
+    }
 
     if (limit == null || page == null) {
       const data = {
@@ -18,17 +33,20 @@ const getMovies = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const movies = await movieService.getMovies(
-      parseInt(limit as string),
-      parseInt(page as string),
-      sort as string,
-      order as string,
-    );
+    const request: GenericPaginationRequest = {
+      search,
+      limit: limitNumber,
+      offset: pageNumber,
+      order,
+      sort,
+    };
+
+    const movies = await movieService.getMovies(request);
 
     responseHandler(res, 200, "OK", true, movies);
   } catch (er) {
     if (er instanceof Error) {
-      responseHandler(res, 400, er.message, false);
+      responseHandler(res, 400, er?.message, false);
     }
   }
 };
@@ -49,9 +67,14 @@ const getMovieById = async (req: Request, res: Response): Promise<void> => {
 
 const addNewMovie = async (req: Request, res: Response): Promise<void> => {
   try {
-    const movie = req.body;
+    const movie: AddMovieRequest = req.body;
 
-    const movieId = await movieService.addNewMovie(movie as AddMovieRequest);
+    const isRequestValid = Object.values(movie).some((value) => value === undefined);
+    if (isRequestValid) {
+      throw new Error("All fields are required");
+    }
+
+    const movieId = await movieService.addNewMovie(movie);
 
     responseHandler(res, 201, "Created", true, { id: movieId });
   } catch (er) {
@@ -64,7 +87,6 @@ const addNewMovie = async (req: Request, res: Response): Promise<void> => {
 const getMoviesNowPlaying = async (req: Request, res: Response): Promise<void> => {
   try {
     const movies = await movieService.getMoviesNowPlaying();
-    console.log(movies);
 
     responseHandler(res, 200, "OK", true, movies);
   } catch (er) {
@@ -76,11 +98,11 @@ const getMoviesNowPlaying = async (req: Request, res: Response): Promise<void> =
 
 const updateMovieById = async (req: Request, res: Response): Promise<void> => {
   try {
-    const movie = req.body;
+    const movie: UpdateMovieRequest = req.body;
 
     const { id } = req.params;
 
-    await movieService.updateMovieById(id, movie as UpdateMovieRequest);
+    await movieService.updateMovieById(id, movie);
 
     responseHandler(res, 200, "OK", true);
   } catch (er) {

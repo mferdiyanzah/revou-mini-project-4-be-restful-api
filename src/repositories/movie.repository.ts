@@ -1,235 +1,176 @@
 import { type ResultSetHeader, type RowDataPacket } from "mysql2";
 
-import connection from "../libs/db";
+import pool from "../libs/db";
+import { type GenericPaginationRequest } from "../models/generic.model";
 import {
   type UpdateMovieRequest,
   type AddMovieRequest,
   type GetAllMoviesNowPlayingQueryResult,
   type GetAllMoviesResponse,
   type MovieModel,
+  type AddMovieActorRequest,
+  type MovieDetailQueryResponse,
 } from "../models/movie.model";
 
 const getMovies = async (
-  limit: number,
-  offset: number,
-  order?: string,
-  sort?: string,
+  request: GenericPaginationRequest
 ): Promise<GetAllMoviesResponse> => {
-  return await new Promise((resolve, reject) => {
-    let query = `
-      SELECT * FROM movies
-      WHERE deleted_at IS NULL
-    `;
+  const query = `
+    SELECT * FROM movies
+    WHERE deleted_at IS NULL AND title LIKE ${pool.escape(`%${request.search}%`)}
+    ${request.sort != null && request.order != null ? `ORDER BY ${request.sort} ${request.order}` : ""}
+    LIMIT ? OFFSET ?;
+  `;
+  const values = [request.limit, request.offset];
 
-    const values = [limit, offset];
+  const [results] = await pool.query<RowDataPacket[]>(query, values);
 
-    if (sort != null && order != null) {
-      query += `ORDER BY ${sort} ${order} `;
-    }
-
-    query += `LIMIT ? OFFSET ?;`;
-
-    connection.query<RowDataPacket[]>(query, values, (err, results) => {
-      if (err != null) {
-        reject(err);
-      };
-
-      const movies: MovieModel[] = results.map((result) => {
-        return {
-          id: result.id,
-          title: result.title,
-          release_date: result.release_date,
-          director: result.director,
-          genre: result.genre,
-          duration: result.duration,
-          rating: result.rating,
-          overview: result.overview,
-        };
-      });
-
-      const data: GetAllMoviesResponse = {
-        results: movies,
-        page: offset + 1,
-        limit,
-      };
-
-      resolve(data);
-    });
+  const movies: MovieModel[] = results.map((result) => {
+    return {
+      id: result.id,
+      title: result.title,
+      release_date: result.release_date,
+      director: result.director,
+      genre: result.genre,
+      duration: result.duration,
+      rating: result.rating,
+      overview: result.overview,
+    };
   });
+
+  const data: GetAllMoviesResponse = {
+    results: movies,
+    page: request.offset + 1,
+    limit: request.limit,
+  };
+
+  return data;
 };
 
-const getMovieById = async (id: string): Promise<MovieModel> => {
-  return await new Promise((resolve, reject) => {
-    const query = `
-      SELECT * FROM movies WHERE id = ? AND deleted_at IS NULL
-    `;
+const getMovieById = async (id: string): Promise<MovieDetailQueryResponse[]> => {
+  const query = `
+    SELECT m.title,
+      m.overview,
+      m.duration,
+      m.director,
+      m.genre,
+      m.rating,
+      m.release_date,
+      a.name as actor
+    FROM movies m
+      JOIN movie_casts mc ON m.id = mc.movie_id
+      JOIN actors a ON mc.actor_id = a.id
+    WHERE m.id = 1 AND m.deleted_at IS NULL;
+  `;
 
-    connection.query<RowDataPacket[]>(query, [id], (err, results) => {
-      if (err !== null) {
-        reject(err);
-      }
+  const [rows] = await pool.execute<RowDataPacket[]>(query, [id]);
 
-      if (results.length === 0) {
-        reject(new Error("Movie not found"));
-      }
-
-      const movie = results[0] as MovieModel;
-
-      resolve(movie);
-    });
-  });
+  return rows as MovieDetailQueryResponse[];
 };
 
-const addMovieActors = async (movieId: number, actorId: number): Promise<void> => {
+const addMovieActors = async ({ movie_id, actor_id }: AddMovieActorRequest): Promise<void> => {
   const checkActorQuery = `
     SELECT id FROM actors WHERE id = ?;
   `;
-  const checkActorValues = [actorId];
+  const checkActorValues = [actor_id];
 
-  const checkActor = await Promise.all([
-    new Promise((resolve, reject) => {
-      connection.query<RowDataPacket[]>(checkActorQuery, checkActorValues, (err, res) => {
-        if (err !== null) {
-          reject(err);
-        }
+  const [checkActor] = await pool.query<RowDataPacket[]>(checkActorQuery, checkActorValues);
 
-        resolve(res.length > 0);
-      });
-    }),
-  ]);
-
-  if (checkActor[0] === false || checkActor[0] === undefined) {
+  if (checkActor.length === 0) {
     throw new Error("Actor not found");
   }
 
-  await new Promise<void>((resolve, reject) => {
-    const query = `
-      INSERT INTO movie_casts (movie_id, actor_id)
-      VALUES (?, ?);
-    `;
+  const query = `
+    INSERT INTO movie_casts (movie_id, actor_id)
+    VALUES (?, ?);
+  `;
 
-    const values = [movieId, actorId];
+  const values = [movie_id, actor_id];
 
-    connection.query<ResultSetHeader>(query, values, (err, res) => {
-      if (err !== null) {
-        reject(err);
-      }
-      resolve();
-    });
-  });
+  await pool.query<ResultSetHeader>(query, values);
 };
 
 const addNewMovie = async (movie: AddMovieRequest): Promise<number> => {
-  return await new Promise((resolve, reject) => {
-    const insertMovieQuery = `
-      INSERT INTO movies (title, release_date, director, genre, duration, rating, overview)
-      VALUES (?, ?, ?, ?, ?, ?, ?);
-    `;
+  const query = `
+    INSERT INTO movies (title, release_date, director, genre, duration, rating, overview)
+    VALUES (?, ?, ?, ?, ?, ?, ?);
+  `;
+  const values = [
+    movie.title,
+    movie.release_date,
+    movie.director,
+    movie.genre,
+    movie.duration,
+    movie.rating,
+    movie.overview,
+  ];
 
-    const insertMovieValues = [
-      movie.title,
-      movie.release_date,
-      movie.director,
-      movie.genre,
-      movie.duration,
-      movie.rating,
-      movie.overview,
-    ];
+  const [result] = await pool.query<ResultSetHeader>(query, values);
+  const movieId = result.insertId;
 
-    connection.query<ResultSetHeader>(
-      insertMovieQuery,
-      insertMovieValues,
-      async (err, results) => {
-        if (err !== null) {
-          reject(err);
-        }
+  await Promise.all(
+    movie.actors.map(async (actor) => {
+      const newActor = { movie_id: movieId, actor_id: actor };
+      await addMovieActors(newActor);
+    }),
+  );
 
-        const movieId = results.insertId;
-
-        try {
-          await Promise.all(
-            movie.actors.map(async (actor) => { await addMovieActors(movieId, actor); }),
-          );
-          resolve(movieId);
-        } catch (er) {
-          reject(er);
-        }
-      },
-    );
-  });
+  return movieId;
 };
 
 const getMoviesNowPlaying = async (): Promise<GetAllMoviesNowPlayingQueryResult[]> => {
-  return await new Promise((resolve, reject) => {
-    const query = `
-      SELECT 
-        m.id,
-        ms.id as show_time_id,
-        ms.show_time,
-        m.title, 
-        m.rating, 
-        m.release_date, 
-        m.director, 
-        m.genre, 
-        m.overview 
-      FROM movie_shows ms
-      JOIN movies m ON ms.movie_id = m.id
-      WHERE ms.show_time >= NOW() AND m.deleted_at IS NULL
-    `;
+  const query = `
+    SELECT 
+      m.id,
+      ms.id as show_time_id,
+      ms.show_time,
+      m.title, 
+      m.rating, 
+      m.release_date, 
+      m.director, 
+      m.genre, 
+      m.overview 
+    FROM movie_shows ms
+    JOIN movies m ON ms.movie_id = m.id
+    WHERE ms.show_time >= NOW() AND m.deleted_at IS NULL;
+  `;
 
-    connection.query<RowDataPacket[]>(query, (err, results) => {
-      if (err != null) {
-        reject(err);
-      }
+  const [results] = await pool.query<RowDataPacket[]>(query);
 
-      resolve(results as GetAllMoviesNowPlayingQueryResult[]);
-    });
-  });
+  return results as GetAllMoviesNowPlayingQueryResult[];
 };
 
 const updateMovieById = async (id: string, movie: UpdateMovieRequest): Promise<number> => {
-  return await new Promise((resolve, reject) => {
-    const query = `
-      UPDATE movies
-      SET title = ?, release_date = ?, director = ?, genre = ?, duration = ?, rating = ?, overview = ?
-      WHERE id = ?;
-    `;
+  const query = `
+    UPDATE movies
+    SET title = ?, release_date = ?, director = ?, genre = ?, duration = ?, rating = ?, overview = ?
+    WHERE id = ?;
+  `;
 
-    const values = [
-      movie.title,
-      movie.release_date,
-      movie.director,
-      movie.genre,
-      movie.duration,
-      movie.rating,
-      movie.overview,
-      id,
-    ];
+  const values = [
+    movie.title,
+    movie.release_date,
+    movie.director,
+    movie.genre,
+    movie.duration,
+    movie.rating,
+    movie.overview,
+    id,
+  ];
 
-    connection.query<ResultSetHeader>(query, values, (err, result) => {
-      if (err !== null) {
-        reject(err);
-      }
-      resolve(result.insertId);
-    });
-  });
+  const [result] = await pool.query<ResultSetHeader>(query, values);
+  return result.affectedRows;
 };
 
 const deleteMovieById = async (id: string): Promise<number> => {
-  return await new Promise((resolve, reject) => {
-    const query = `
-      UPDATE movies
-      SET deleted_at = NOW()
-      WHERE id = ?;
-    `;
+  const query = `
+    UPDATE movies
+    SET deleted_at = NOW()
+    WHERE id = ?;
+  `;
 
-    connection.query<ResultSetHeader>(query, [id], (err, result) => {
-      if (err !== null) {
-        reject(err);
-      }
-      resolve(result.affectedRows);
-    });
-  });
+  const [result] = await pool.query<ResultSetHeader>(query, [id]);
+  return result.affectedRows;
 };
 
 const movieRepository = {

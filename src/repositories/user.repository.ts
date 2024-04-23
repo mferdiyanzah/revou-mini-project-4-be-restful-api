@@ -1,47 +1,39 @@
-import { ResultSetHeader, RowDataPacket } from "mysql2";
-import connection from "../libs/db";
-import { UserModel, UserRegisterRequest } from "../models/user.model";
+import { type ResultSetHeader, type RowDataPacket } from "mysql2";
+
+import pool from "../libs/db";
+import { type UserModel, type UserRegisterRequest } from "../models/user.model";
 
 const register = async (user: UserRegisterRequest): Promise<number> => {
-  return new Promise((resolve, reject) => {
-    const query = `INSERT INTO users (email, password, username) VALUES (?, ?, ?)`;
-    const values = [user.email, user.password, user.username];
+  const query = `
+    INSERT INTO users (email, password, username)
+    VALUES (?, ?, ?);  
+  `;
+  const values = [user.email, user.password, user.username];
 
-    connection.query<ResultSetHeader>(query, values, (err, results) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(results.insertId);
-      }
-    });
-  });
-}
+  const [result] = await pool.query<ResultSetHeader>(query, values);
+  return result.insertId;
+};
 
 const findUserByEmail = async (email: string): Promise<UserModel | null> => {
-  return new Promise((resolve, reject) => {
-    const query = `SELECT * FROM users WHERE email = ?`;
-    const values = [email];
+  const query = `SELECT * FROM users WHERE email = ?`;
+  const values = [email];
 
-    connection.query<RowDataPacket[]>(query, values, (err, results) => {
-      if (err) {
-        reject(err);
-      }
+  const [results] = await pool.query<RowDataPacket[]>(query, values);
 
-      if (results.length === 0) {
-        resolve(null);
-        return;
-      }
+  if (results.length === 0) {
+    return null;
+  }
 
-      const user: UserModel = {
-        id: results[0].id,
-        email: results[0].email,
-        password: results[0].password,
-        username: results[0].username
-      };
-      resolve(user);
-    });
-  });
-}
+  const user: UserModel = {
+    id: results[0].id,
+    email: results[0].email,
+    password: results[0].password,
+    username: results[0].username,
+    isAdmin: results[0].is_admin
+  };
+
+  return user;
+};
 
 const userRepository = {
   register,

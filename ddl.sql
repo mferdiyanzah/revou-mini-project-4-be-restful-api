@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `movie_showtimes` (
   `movie_id` int(11) NOT NULL,
   `price` int(11) NOT NULL,
   `show_time` datetime NOT NULL,
-  `total_seats` int(11) NOT NULL,
+  `status` enum('upcoming', 'now_showing', 'finished') NOT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
@@ -71,14 +71,48 @@ CREATE TABLE IF NOT EXIST `showtime_seats` (
   FOREIGN KEY (`seat_id`) REFERENCES `seats`(`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 AUTO_INCREMENT = 1;
 CREATE TABLE IF NOT EXISTS `bookings` (
-  `id` varchar(50) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `booking_code` varchar(50) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `movie_showtime_id` int(11) NOT NULL,
+  `showtime_seat_id` int(11) NOT NULL,
   `status` enum('pending', 'confirmed', 'cancelled') NOT NULL,
-  `seats_booked` int(11) NOT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY (`booking_code`),
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`),
-  FOREIGN KEY (`movie_show_id`) REFERENCES `movie_shows`(`id`),
-) ENGINE = InnoDB DEFAULT CHARSET = utf8;
+  FOREIGN KEY (`showtime_seat_id`) REFERENCES `showtime_seats`(`id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 AUTO_INCREMENT = 1;
+-- Booking history with all movie details
+SELECT b.booking_code,
+  b.status,
+  m.title,
+  m.release_date,
+  m.duration,
+  m.genre,
+  m.rating,
+  m.director,
+  m.overview,
+  s.show_time,
+  s.price,
+  s.total_seats,
+  u.username
+FROM bookings b
+  JOIN showtime_seats ss ON b.showtime_seat_id = ss.id
+  JOIN movie_showtimes s ON ss.movie_show_id = s.id
+  JOIN movies m ON s.movie_id = m.id
+  JOIN users u ON b.user_id = u.id
+WHERE b.user_id = 1;
+-- get movie detail with actor
+SELECT m.title,
+  m.overview,
+  m.duration,
+  m.director,
+  m.genre,
+  m.rating,
+  m.release_date,
+  a.name as actor_name
+FROM movies m
+  JOIN movie_casts mc ON m.id = mc.movie_id
+  JOIN actors a ON mc.actor_id = a.id
+WHERE m.id = 1;

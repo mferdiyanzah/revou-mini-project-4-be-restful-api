@@ -1,28 +1,42 @@
 import { type RowDataPacket } from "mysql2";
 
-import connection from "../libs/db";
+import pool from "../libs/db";
 import { type GetAllSeatsResponse } from "../models/seat.model";
 
 const getAllSeats = async (): Promise<GetAllSeatsResponse> => {
-  return await new Promise((resolve, reject) => {
-    const query = `
-      SELECT id FROM seats;
-    `;
+  const query = `
+    SELECT id FROM seats;
+  `;
 
-    connection.query<RowDataPacket[]>(query, (err, results) => {
-      if (err != null) {
-        reject(err);
-      }
+  const [results] = await pool.query<RowDataPacket[]>(query);
 
-      const seats: GetAllSeatsResponse = results.map((result) => {
-        return { id: result.id, };
-      });
-
-      resolve(seats);
-    });
+  const seats: GetAllSeatsResponse = results.map((result) => {
+    return { id: result.id, };
   });
+
+  return seats;
 };
 
-const seatRepository = { getAllSeats, };
+const getAvailableSeats = async (showTimeId: string): Promise<GetAllSeatsResponse> => {
+  const query = `
+    SELECT 
+      seat_number,
+      ss.status
+    FROM seats s
+    INNER JOIN showtime_seats ss ON s.id = ss.seat_id
+    WHERE ss.movie_show_id = ?
+      AND ss.status = 'available';
+  `;
+
+  const [results] = await pool.query<RowDataPacket[]>(query, [showTimeId]);
+
+  const seats: GetAllSeatsResponse = results.map((result) => {
+    return { id: result.id, };
+  });
+
+  return seats;
+};
+
+const seatRepository = { getAllSeats, getAvailableSeats };
 
 export default seatRepository;

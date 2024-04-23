@@ -1,4 +1,7 @@
-import userController from "./user.controller";
+import bookingController from "./booking.controller";
 import movieController from "./movie.controller";
+import userController from "./user.controller";
 
-export { userController, movieController };
+export {
+  userController, movieController, bookingController
+};

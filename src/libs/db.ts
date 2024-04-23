@@ -1,4 +1,4 @@
-import mysql from "mysql2";
+import mysql from "mysql2/promise";
 
 const config = {
   host: "localhost",
@@ -8,6 +8,6 @@ const config = {
   port: 3306,
 };
 
-const connection = mysql.createConnection(config);
+const pool = mysql.createPool(config);
 
-export default connection;
+export default pool;

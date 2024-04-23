@@ -1,15 +1,26 @@
-import { type UserRegisterRequest } from "../models/user.model";
+import { type UserModel, type UserRegisterRequest } from "../models/user.model";
 import { userRepository } from "../repositories";
 import { hashPassword, verifyPassword } from "../utils/crypto";
 import { generateToken } from "../utils/jwt";
 
+const findUserByEmail = async (email: string): Promise<UserModel | null> => {
+  return await userRepository.findUserByEmail(email);
+};
 
+const register = async (user: UserRegisterRequest): Promise<string> => {
+  const checkIfUserExists = await userRepository.findUserByEmail(user.email);
+  if (checkIfUserExists !== null) {
+    throw new Error("User already exists");
+  }
 
-const register = async (user: UserRegisterRequest): Promise<number> => {
   const hashedPassword = await hashPassword(user.password);
   user.password = hashedPassword;
 
-  return await userRepository.register(user);
+  const userId = await userRepository.register(user);
+
+  const token = generateToken(userId, user.email);
+
+  return token;
 };
 
 const login = async (email: string, password: string): Promise<string> => {
@@ -30,6 +41,7 @@ const login = async (email: string, password: string): Promise<string> => {
 const UserService = {
   register,
   login,
+  findUserByEmail,
 };
 
 export default UserService;

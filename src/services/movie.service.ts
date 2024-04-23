@@ -1,24 +1,29 @@
+import { type GenericPaginationRequest } from "../models/generic.model";
 import {
-  type UpdateMovieRequest,
   type AddMovieRequest,
   type GetAllMoviesResponse,
-  type MovieModel,
+  type MovieDetailResponse,
+  type UpdateMovieRequest
 } from "../models/movie.model";
 import { movieRepository } from "../repositories";
 
 const getMovies = async (
-  limit: number,
-  offset: number,
-  order: string,
-  sort: string,
+  request: GenericPaginationRequest
 ): Promise<GetAllMoviesResponse> => {
-  const offsetValue = limit * (offset - 1);
+  request.offset = request.limit * (request.offset - 1);
 
-  return await movieRepository.getMovies(limit, offsetValue, order, sort);
+  return await movieRepository.getMovies(request);
 };
 
-const getMovieById = async (id: string): Promise<MovieModel> => {
-  return await movieRepository.getMovieById(id);
+const getMovieById = async (id: string): Promise<MovieDetailResponse> => {
+  const movies = await movieRepository.getMovieById(id);
+
+  const movie: MovieDetailResponse = {
+    ...movies[0],
+    actors: movies.map((movie) => movie.actor),
+  };
+
+  return movie;
 };
 
 const addNewMovie = async (movie: AddMovieRequest): Promise<number> => {
@@ -32,11 +37,12 @@ const getMoviesNowPlaying = async (): Promise<GetAllMoviesResponse[]> => {
     const { title, release_date, director, genre, duration, rating, overview } = result;
     const showTime = { id: result.id, show_time: result.show_time };
     if (acc[result.id] == null) {
-      acc[result.id] = { title, release_date, director, genre, duration, rating, overview, show_time: [showTime] };
+      acc[result.id] = {
+        title, release_date, director, genre, duration, rating, overview, show_time: [showTime]
+      };
     } else {
       acc[result.id].show_time.push(showTime);
     }
-    console.log(acc);
     return acc;
   }, {}));
 

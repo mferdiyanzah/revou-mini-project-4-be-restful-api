@@ -12,6 +12,10 @@ interface MovieModel {
   overview: string;
 };
 
+interface MovieDetailQueryResponse extends MovieModel {
+  actor: string;
+};
+
 interface MovieDetailResponse extends MovieModel {
   actors: string[];
 };
@@ -47,10 +51,15 @@ interface GetAllMoviesNowPlayingResponse extends MovieModel {
 
 interface UpdateMovieRequest extends AddMovieRequest { }
 
+interface AddMovieActorRequest {
+  actor_id: number;
+  movie_id: number;
+}
+
 export type {
   AddMovieRequest, GetAllMoviesNowPlayingQueryResult,
   GetAllMoviesNowPlayingResponse, GetAllMoviesQuery,
   GetAllMoviesResponse, MovieDetailResponse, MovieModel,
-  UpdateMovieRequest,
+  UpdateMovieRequest, AddMovieActorRequest, MovieDetailQueryResponse
 };
 

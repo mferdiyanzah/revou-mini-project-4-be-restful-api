@@ -1,20 +1,22 @@
-import { type Request, type Response, type NextFunction } from "express";
-import { verifyToken } from "../utils/jwt";
-import responseHandler from "../utils/response-handler";
+import {
+  type NextFunction,
+  type Request, type Response
+} from "express";
+
+
 import { type JwtPayload } from "jsonwebtoken";
 
-const verifyRequestToken = (req: Request): JwtPayload => {
+import { userService } from "../services";
+import { verifyToken } from "../utils/jwt";
+import responseHandler from "../utils/response-handler";
+
+const verifyRequestToken = (req: Request): boolean => {
   const token = req.headers.authorization;
   if (token == null) {
     throw new Error("Token is required");
   }
 
-  const decoded = verifyToken(token);
-  if (typeof decoded !== "object") {
-    throw new Error("Invalid token");
-  }
-
-  return decoded;
+  return true;
 };
 
 const authMiddleware = async (
@@ -38,9 +40,20 @@ const adminMiddleware = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const decoded = verifyRequestToken(req);
+    const authHeader = req.headers.authorization;
+    if (authHeader == null) {
+      throw new Error("Token is required");
+    }
 
-    if (decoded.role !== "admin") {
+    const token = authHeader.split(" ")[1];
+    const decoded: JwtPayload | string = verifyToken(String(token));
+
+    const user = await userService.findUserByEmail((decoded as JwtPayload)?.email as string);
+    if (user == null) {
+      throw new Error("User not found");
+    }
+
+    if (!user.isAdmin) {
       throw new Error("Unauthorized");
     }
 
@@ -52,4 +65,5 @@ const adminMiddleware = async (
   }
 };
 
-export { authMiddleware, adminMiddleware };
+export { adminMiddleware, authMiddleware };
+
