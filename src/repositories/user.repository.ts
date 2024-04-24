@@ -5,10 +5,10 @@ import { type UserModel, type UserRegisterRequest } from "../models/user.model";
 
 const register = async (user: UserRegisterRequest): Promise<number> => {
   const query = `
-    INSERT INTO users (email, password, username)
-    VALUES (?, ?, ?);  
+    INSERT INTO users (email, password, username, is_admin)
+    VALUES (?, ?, ?, ?)
   `;
-  const values = [user.email, user.password, user.username];
+  const values = [user.email, user.password, user.username, user.isAdmin];
 
   const [result] = await pool.query<ResultSetHeader>(query, values);
   return result.insertId;

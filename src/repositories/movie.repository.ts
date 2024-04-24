@@ -60,7 +60,7 @@ const getMovieById = async (id: string): Promise<MovieDetailQueryResponse[]> => 
     FROM movies m
       JOIN movie_casts mc ON m.id = mc.movie_id
       JOIN actors a ON mc.actor_id = a.id
-    WHERE m.id = 1 AND m.deleted_at IS NULL;
+    WHERE m.id = ? AND m.deleted_at IS NULL;
   `;
 
   const [rows] = await pool.execute<RowDataPacket[]>(query, [id]);

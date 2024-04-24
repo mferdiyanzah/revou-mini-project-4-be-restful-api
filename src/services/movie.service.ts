@@ -18,8 +18,16 @@ const getMovies = async (
 const getMovieById = async (id: string): Promise<MovieDetailResponse> => {
   const movies = await movieRepository.getMovieById(id);
 
+
   const movie: MovieDetailResponse = {
-    ...movies[0],
+    id: movies[0].id,
+    title: movies[0].title,
+    release_date: movies[0].release_date,
+    director: movies[0].director,
+    genre: movies[0].genre,
+    duration: movies[0].duration,
+    rating: movies[0].rating,
+    overview: movies[0].overview,
     actors: movies.map((movie) => movie.actor),
   };
 

@@ -52,7 +52,7 @@ const adminMiddleware = async (
     if (user == null) {
       throw new Error("User not found");
     }
-
+    console.log(user);
     if (!user.isAdmin) {
       throw new Error("Unauthorized");
     }
