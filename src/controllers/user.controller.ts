@@ -1,56 +1,46 @@
 import { type Request, type Response } from "express";
 
+import { type UserLoginRequest, type UserRegisterRequest } from "../models/user.model";
 import { userService } from "../services";
+import { validateRequest } from "../utils/global";
 import responseHandler from "../utils/response-handler";
 
 const register = async (req: Request, res: Response): Promise<void> => {
   try {
-    const requestBody = req.body;
-    const isRequestValid =
-      requestBody.username === undefined ||
-      requestBody.email === undefined ||
-      requestBody.password === undefined;
+    const userRegisterRequest: UserRegisterRequest = req.body;
+    const requiredKeys = ["username", "email", "password"];
+    const isRequestInvalid = !validateRequest(requiredKeys, userRegisterRequest);
 
-    if (isRequestValid) {
-      throw new Error("Name, email, and password are required");
+    if (isRequestInvalid) {
+      throw new Error("Username, email, and password are required");
     }
 
-    const userRegisterRequest = {
-      username: requestBody.username,
-      email: requestBody.email,
-      password: requestBody.password,
-      isAdmin: requestBody.is_admin,
-    };
-
     const token = await userService.register(userRegisterRequest);
-
-    responseHandler(res, 201, "Created", true, { token });
+    responseHandler(res, 201, "User created successfully", true, { token });
   } catch (er) {
     if (er instanceof Error) {
-      responseHandler(res, 400, er.message, false);
+      const statusCode = er.message === "User already exists" ? 409 : 400;
+      responseHandler(res, statusCode, er.message, false);
     }
   }
 };
 
 const login = async (req: Request, res: Response): Promise<void> => {
   try {
-    const requestBody = req.body;
-    const isRequestValid =
-      requestBody.email === undefined || requestBody.password === undefined;
+    const userLoginRequest: UserLoginRequest = req.body;
+    const requiredKeys = ["email", "password"];
+    const isRequestInvalid = !validateRequest(requiredKeys, userLoginRequest);
 
-    if (isRequestValid) {
+    if (isRequestInvalid) {
       throw new Error("Email and password are required");
     }
 
-    const token = await userService.login(
-      requestBody.email as string,
-      requestBody.password as string,
-    );
-
-    responseHandler(res, 200, "OK", true, { token });
+    const token = await userService.login(userLoginRequest);
+    responseHandler(res, 200, "User logged in successfully", true, { token });
   } catch (er) {
     if (er instanceof Error) {
-      responseHandler(res, 400, er.message, false);
+      const statusCode = er.message === "Invalid credentials" ? 401 : 400;
+      responseHandler(res, statusCode, er.message, false);
     }
   }
 };

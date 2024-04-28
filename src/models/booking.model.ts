@@ -4,6 +4,7 @@ interface BookingModel {
   user_id: number;
   showtime_seat_id: number;
   status: "pending" | "cancelled" | "confirmed";
+  created_at: Date;
 };
 
 interface BookingHistory {
@@ -20,7 +21,12 @@ type AddBookingPayload = Pick<AddBookingRequest, "user_id" | "showtime_seat_id">
 
 type AddBookingResponse = Pick<BookingModel, "booking_code" | "status">;
 
+interface UpdateBookingStatusRequest {
+  userId: number;
+  bookingId: string;
+  status: string;
+};
 
 export type {
-  BookingModel, AddBookingRequest, AddBookingResponse, AddBookingPayload, BookingHistory
+  BookingModel, AddBookingRequest, AddBookingResponse, AddBookingPayload, BookingHistory, UpdateBookingStatusRequest
 };

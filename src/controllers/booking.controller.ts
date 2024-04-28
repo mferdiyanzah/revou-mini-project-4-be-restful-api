@@ -6,22 +6,21 @@ import { bookingService } from '../services';
 import { decodeToken } from '../utils/jwt';
 import responseHandler from '../utils/response-handler';
 
+
 const addBooking = async (req: Request, res: Response): Promise<void> => {
   try {
-    const requestBody = req.body;
+    const { showtime_seat_id } = req.body;
 
-    if (requestBody.showtime_seat_id === undefined) {
-      throw new Error("User ID and Showtime Seat ID are required");
+    if (showtime_seat_id == null) {
+      throw new Error("Showtime Seat ID is required");
     }
 
-    const authHeader = req.headers.authorization;
-    const token = authHeader?.split(" ")[1];
-
-    const decoded: JwtPayload | string = decodeToken(String(token));
+    const authHeader = req.headers.authorization ?? '';
+    const decoded: JwtPayload | string = decodeToken(authHeader);
 
     const bookingPayload = {
-      user_id: (decoded)?.userId,
-      showtime_seat_id: requestBody.showtime_seat_id,
+      user_id: decoded?.userId,
+      showtime_seat_id,
     };
 
     const bookingId = await bookingService.addBooking(bookingPayload);
@@ -36,14 +35,23 @@ const addBooking = async (req: Request, res: Response): Promise<void> => {
 
 const updateBookingStatus = async (req: Request, res: Response): Promise<void> => {
   try {
-    const bookingId = req.params.id;
+    const authHeader = req.headers.authorization ?? '';
+    const decoded: JwtPayload | string = decodeToken(authHeader);
 
+    const bookingId = req.params.bookingId;
     const status = "confirmed";
 
-    const result = await bookingService.updateBookingStatus(bookingId, status);
+    const updateBookingStatusRequest = {
+      userId: decoded?.userId,
+      bookingId,
+      status,
+    };
+
+    const result = await bookingService.updateBookingStatus(updateBookingStatusRequest);
 
     if (result === 0) {
       responseHandler(res, 200, "Booking not found", false);
+      return;
     }
 
     responseHandler(res, 200, "OK", true);
@@ -56,10 +64,8 @@ const updateBookingStatus = async (req: Request, res: Response): Promise<void> =
 
 const getBookingHistory = async (req: Request, res: Response): Promise<void> => {
   try {
-    const authHeader = req.headers.authorization;
-    const token = authHeader?.split(" ")[1];
-
-    const decoded: JwtPayload | string = decodeToken(String(token));
+    const authHeader = req.headers.authorization ?? '';
+    const decoded: JwtPayload | string = decodeToken(authHeader);
 
     const bookings = await bookingService.getBookingHistory(decoded?.userId as string);
 

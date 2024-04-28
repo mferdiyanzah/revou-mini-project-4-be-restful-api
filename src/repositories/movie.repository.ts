@@ -15,13 +15,18 @@ import {
 const getMovies = async (
   request: GenericPaginationRequest
 ): Promise<GetAllMoviesResponse> => {
+  const { search, sort, order, limit, offset } = request;
+
   const query = `
-    SELECT * FROM movies
-    WHERE deleted_at IS NULL AND title LIKE ${pool.escape(`%${request.search}%`)}
-    ${request.sort != null && request.order != null ? `ORDER BY ${request.sort} ${request.order}` : ""}
-    LIMIT ? OFFSET ?;
+    SELECT * FROM 
+      movies
+    WHERE
+       deleted_at IS NULL AND title LIKE ${pool.escape(`%${search}%`)}
+      ${sort != null && order != null ? `ORDER BY ${sort} ${order}` : ""}
+    LIMIT ? 
+    OFFSET ?;
   `;
-  const values = [request.limit, request.offset];
+  const values = [limit, offset];
 
   const [results] = await pool.query<RowDataPacket[]>(query, values);
 
@@ -40,8 +45,8 @@ const getMovies = async (
 
   const data: GetAllMoviesResponse = {
     results: movies,
-    page: request.offset + 1,
-    limit: request.limit,
+    page: offset + 1,
+    limit,
   };
 
   return data;
@@ -81,8 +86,10 @@ const addMovieActors = async ({ movie_id, actor_id }: AddMovieActorRequest): Pro
   }
 
   const query = `
-    INSERT INTO movie_casts (movie_id, actor_id)
-    VALUES (?, ?);
+    INSERT INTO 
+      movie_casts (movie_id, actor_id)
+    VALUES 
+      (?, ?);
   `;
 
   const values = [movie_id, actor_id];
@@ -92,8 +99,10 @@ const addMovieActors = async ({ movie_id, actor_id }: AddMovieActorRequest): Pro
 
 const addNewMovie = async (movie: AddMovieRequest): Promise<number> => {
   const query = `
-    INSERT INTO movies (title, release_date, director, genre, duration, rating, overview)
-    VALUES (?, ?, ?, ?, ?, ?, ?);
+    INSERT INTO 
+      movies (title, release_date, director, genre, duration, rating, overview)
+    VALUES 
+      (?, ?, ?, ?, ?, ?, ?);
   `;
   const values = [
     movie.title,
@@ -132,7 +141,7 @@ const getMoviesNowPlaying = async (): Promise<GetAllMoviesNowPlayingQueryResult[
       m.overview 
     FROM movie_shows ms
     JOIN movies m ON ms.movie_id = m.id
-    WHERE ms.show_time >= NOW() AND m.deleted_at IS NULL;
+    WHERE ms.status = 'now_playing' AND m.deleted_at IS NULL;
   `;
 
   const [results] = await pool.query<RowDataPacket[]>(query);
@@ -141,22 +150,20 @@ const getMoviesNowPlaying = async (): Promise<GetAllMoviesNowPlayingQueryResult[
 };
 
 const updateMovieById = async (id: string, movie: UpdateMovieRequest): Promise<number> => {
-  const query = `
-    UPDATE movies
-    SET title = ?, release_date = ?, director = ?, genre = ?, duration = ?, rating = ?, overview = ?
-    WHERE id = ?;
-  `;
+  let query = 'UPDATE movies SET ';
+  const values: any[] = [];
 
-  const values = [
-    movie.title,
-    movie.release_date,
-    movie.director,
-    movie.genre,
-    movie.duration,
-    movie.rating,
-    movie.overview,
-    id,
-  ];
+  for (const key in movie) {
+    if (Object.prototype.hasOwnProperty.call(movie, key)) {
+      query += `${key} = ?, `;
+      values.push(movie[key as keyof UpdateMovieRequest]);
+    }
+  }
+
+  query = query.slice(0, -2);
+
+  query += ' WHERE id = ?';
+  values.push(id);
 
   const [result] = await pool.query<ResultSetHeader>(query, values);
   return result.affectedRows;

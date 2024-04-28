@@ -5,20 +5,20 @@ import {
   movieShowTimeRepository, seatRepository, showTimeSeatRepository
 } from "../repositories";
 
-const addShowTime = async (request: MovieShowRequest): Promise<boolean> => {
+const addShowTime = async (request: MovieShowRequest): Promise<number> => {
   const connection = await pool.getConnection();
+  const { show_time } = request;
 
   try {
     await connection.beginTransaction();
 
-    const newMovieShow: MovieShowRequest = {
-      movie_id: request.movie_id,
-      price: request.price,
-      show_time: request.show_time,
-      status: "upcoming",
-    };
+    const isTimeAvailable = await movieShowTimeRepository.checkTimeAvailability(show_time);
 
-    const showTimeId = await movieShowTimeRepository.addShowTime(newMovieShow);
+    if (!isTimeAvailable) {
+      throw new Error("Show time is not available");
+    }
+
+    const showTimeId = await movieShowTimeRepository.addShowTime(request);
 
     const seats = await seatRepository.getAllSeats();
 
@@ -33,7 +33,7 @@ const addShowTime = async (request: MovieShowRequest): Promise<boolean> => {
 
     await connection.commit();
 
-    return true;
+    return showTimeId;
   } catch (err) {
     await connection.rollback();
     throw err;
@@ -50,10 +50,20 @@ const updateShowTime = async (request: UpdateMovieShowRequest): Promise<number> 
   return await movieShowTimeRepository.updateShowTime(request);
 };
 
+const updateShowTimeFinished = async (): Promise<number> => {
+  return await movieShowTimeRepository.updateShowTimeFinished();
+};
+
+const updateShowTimeNowPlaying = async (): Promise<number> => {
+  return await movieShowTimeRepository.updateShowTimeNowPlaying();
+};
+
 const movieShowTimeService = {
   addShowTime,
   deleteShowTime,
   updateShowTime,
+  updateShowTimeFinished,
+  updateShowTimeNowPlaying,
 };
 
 export default movieShowTimeService;

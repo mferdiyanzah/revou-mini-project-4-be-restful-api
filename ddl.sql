@@ -1,118 +1,100 @@
-CREATE TABLE IF NOT EXISTS `users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `is_admin` tinyint(1) NOT NULL DEFAULT '0',
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+-- cineprime.actors definition
+CREATE TABLE `actors` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 AUTO_INCREMENT = 1;
-CREATE TABLE IF NOT EXISTS `movies` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+) ENGINE = InnoDB AUTO_INCREMENT = 3 DEFAULT CHARSET = utf8mb3;
+-- cineprime.movies definition
+CREATE TABLE `movies` (
+  `id` int NOT NULL AUTO_INCREMENT,
   `title` varchar(100) NOT NULL,
   `overview` text NOT NULL,
-  `duration` int(11) NOT NULL,
+  `duration` int NOT NULL,
   `director` varchar(50) NOT NULL,
   `genre` varchar(50) NOT NULL,
   `rating` varchar(50) NOT NULL,
   `release_date` date NOT NULL,
-  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp DEFAULT CURRENT_TIMESTAMP,
-  `deleted_at` timestamp DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `deleted_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 AUTO_INCREMENT = 1;
-CREATE TABLE IF NOT EXISTS `actors` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 AUTO_INCREMENT = 1;
-CREATE TABLE IF NOT EXISTS `movie_casts` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `movie_id` int(11) NOT NULL,
-  `actor_id` int(11) NOT NULL,
-  `created_at` timestamp default current_timestamp,
-  `updated_at` timestamp default current_timestamp,
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`movie_id`) REFERENCES `movies`(`id`),
-  FOREIGN KEY (`actor_id`) REFERENCES `actors`(`id`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 AUTO_INCREMENT = 1;
-CREATE TABLE IF NOT EXISTS `movie_showtimes` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `movie_id` int(11) NOT NULL,
-  `price` int(11) NOT NULL,
-  `show_time` datetime NOT NULL,
-  `status` enum('upcoming', 'now_showing', 'finished') NOT NULL,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`movie_id`) REFERENCES `movies`(`id`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 AUTO_INCREMENT = 1;
-CREATE TABLE IF NOT EXISTS `seats` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+) ENGINE = InnoDB AUTO_INCREMENT = 47 DEFAULT CHARSET = utf8mb3;
+-- cineprime.seats definition
+CREATE TABLE `seats` (
+  `id` int NOT NULL AUTO_INCREMENT,
   `seat_number` varchar(5) NOT NULL,
-  `row_number` varchar(5) NOT NULL,
-  `created_at` timestamp default now(),
-  `updated_at` timestamp default now(),
-  `deleted_at` timestamp default null,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB AUTO_INCREMENT = 15 DEFAULT CHARSET = utf8mb3;
+-- cineprime.users definition
+CREATE TABLE `users` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `username` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `is_admin` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB AUTO_INCREMENT = 9 DEFAULT CHARSET = utf8mb3;
+-- cineprime.movie_casts definition
+CREATE TABLE `movie_casts` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `movie_id` int NOT NULL,
+  `actor_id` int NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 AUTO_INCREMENT = 1;
-CREATE TABLE IF NOT EXIST `showtime_seats` (
+  KEY `movie_id` (`movie_id`),
+  KEY `actor_id` (`actor_id`),
+  CONSTRAINT `movie_casts_ibfk_1` FOREIGN KEY (`movie_id`) REFERENCES `movies` (`id`),
+  CONSTRAINT `movie_casts_ibfk_2` FOREIGN KEY (`actor_id`) REFERENCES `actors` (`id`)
+) ENGINE = InnoDB AUTO_INCREMENT = 63 DEFAULT CHARSET = utf8mb3;
+-- cineprime.movie_shows definition
+CREATE TABLE `movie_shows` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `movie_id` int NOT NULL,
+  `price` int NOT NULL,
+  `show_time` datetime NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `deleted_at` datetime DEFAULT NULL,
+  `status` enum('upcoming', 'now_showing', 'finished') DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `movie_id` (`movie_id`),
+  CONSTRAINT `movie_shows_ibfk_1` FOREIGN KEY (`movie_id`) REFERENCES `movies` (`id`)
+) ENGINE = InnoDB AUTO_INCREMENT = 22 DEFAULT CHARSET = utf8mb3;
+-- cineprime.showtime_seats definition
+CREATE TABLE `showtime_seats` (
   `id` int NOT NULL AUTO_INCREMENT,
   `movie_show_id` int NOT NULL,
   `seat_id` int NOT NULL,
   `status` enum('available', 'booked') NOT NULL,
-  `created_at` timestamp default now(),
-  `updated_at` timestamp default now(),
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`movie_show_id`) REFERENCES `movie_shows`(`id`),
-  FOREIGN KEY (`seat_id`) REFERENCES `seats`(`id`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 AUTO_INCREMENT = 1;
-CREATE TABLE IF NOT EXISTS `bookings` (
+  KEY `movie_show_id` (`movie_show_id`),
+  KEY `seat_id` (`seat_id`),
+  CONSTRAINT `showtime_seats_ibfk_1` FOREIGN KEY (`movie_show_id`) REFERENCES `movie_shows` (`id`),
+  CONSTRAINT `showtime_seats_ibfk_2` FOREIGN KEY (`seat_id`) REFERENCES `seats` (`id`)
+) ENGINE = InnoDB AUTO_INCREMENT = 34 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+-- cineprime.bookings definition
+CREATE TABLE `bookings` (
   `id` int NOT NULL AUTO_INCREMENT,
   `booking_code` varchar(50) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `showtime_seat_id` int(11) NOT NULL,
-  `status` enum('pending', 'confirmed', 'cancelled') NOT NULL,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
+  `user_id` int NOT NULL,
+  `showtime_seat_id` int NOT NULL,
+  `status` enum('pending', 'confirmed', 'cancelled', 'expired') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY (`booking_code`),
-  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`),
-  FOREIGN KEY (`showtime_seat_id`) REFERENCES `showtime_seats`(`id`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 AUTO_INCREMENT = 1;
--- Booking history with all movie details
-SELECT b.booking_code,
-  b.status,
-  m.title,
-  m.release_date,
-  m.duration,
-  m.genre,
-  m.rating,
-  m.director,
-  m.overview,
-  s.show_time,
-  s.price,
-  s.total_seats,
-  u.username
-FROM bookings b
-  JOIN showtime_seats ss ON b.showtime_seat_id = ss.id
-  JOIN movie_showtimes s ON ss.movie_show_id = s.id
-  JOIN movies m ON s.movie_id = m.id
-  JOIN users u ON b.user_id = u.id
-WHERE b.user_id = 1;
--- get movie detail with actor
-SELECT m.title,
-  m.overview,
-  m.duration,
-  m.director,
-  m.genre,
-  m.rating,
-  m.release_date,
-  a.name as actor_name
-FROM movies m
-  JOIN movie_casts mc ON m.id = mc.movie_id
-  JOIN actors a ON mc.actor_id = a.id
-WHERE m.id = 1;
+  UNIQUE KEY `booking_code` (`booking_code`),
+  KEY `user_id` (`user_id`),
+  KEY `showtime_seat_id` (`showtime_seat_id`),
+  CONSTRAINT `bookings_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `bookings_ibfk_2` FOREIGN KEY (`showtime_seat_id`) REFERENCES `showtime_seats` (`id`)
+) ENGINE = InnoDB AUTO_INCREMENT = 12 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;

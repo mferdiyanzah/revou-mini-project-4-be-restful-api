@@ -8,7 +8,7 @@ const bookingRoute = Router();
 bookingRoute.use(authMiddleware);
 
 bookingRoute.post("/add", bookingController.addBooking);
-bookingRoute.put("/update/:id", bookingController.updateBookingStatus);
+bookingRoute.put("/paid/:bookingId", bookingController.updateBookingStatus);
 bookingRoute.get("/history", bookingController.getBookingHistory);
 
 export default bookingRoute;

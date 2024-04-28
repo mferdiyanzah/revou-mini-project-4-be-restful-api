@@ -1,12 +1,16 @@
 import { type RowDataPacket, type ResultSetHeader } from "mysql2";
 
 import pool from "../libs/db";
-import { type BookingHistory, type AddBookingRequest } from "../models/booking.model";
+import {
+  type BookingHistory, type AddBookingRequest, type BookingModel
+} from "../models/booking.model";
 
 const addBooking = async (booking: AddBookingRequest): Promise<number> => {
   const query = `
-    INSERT INTO bookings (booking_code, user_id, showtime_seat_id, status)
-    VALUES (?, ?, ?, 'pending');
+    INSERT INTO 
+      bookings (booking_code, user_id, showtime_seat_id, status)
+    VALUES 
+      (?, ?, ?, 'pending');
   `;
   const values = [booking.booking_code, booking.user_id, booking.showtime_seat_id];
 
@@ -14,11 +18,21 @@ const addBooking = async (booking: AddBookingRequest): Promise<number> => {
   return result.insertId;
 };
 
+const getBookingByCode = async (bookingCode: string): Promise<BookingModel> => {
+  const query = `
+    SELECT * FROM bookings WHERE booking_code = ?;
+  `;
+  const values = [bookingCode];
+
+  const [result] = await pool.query<RowDataPacket[]>(query, values);
+  return result[0] as BookingModel;
+};
+
 const updateBookingStatus = async (bookingId: string, status: string): Promise<number> => {
   const query = `
     UPDATE bookings
     SET status = ?
-    WHERE id = ?;
+    WHERE booking_code = ?;
   `;
   const values = [status, bookingId];
 
@@ -78,6 +92,7 @@ const bookingRepository = {
   updateBookingStatus,
   getBookingHistory,
   updateExpiredBooking,
+  getBookingByCode,
 };
 
 export default bookingRepository;

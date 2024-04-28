@@ -1,4 +1,6 @@
-import { type Request, type Response, type NextFunction } from "express";
+import {
+  type Request, type Response, type NextFunction
+} from "express";
 
 const generateStatusCode = (statusCode: number): string => {
   if (statusCode >= 200 && statusCode < 300) {
@@ -30,7 +32,7 @@ const logger = (req: Request, res: Response, next: NextFunction): void => {
     const currentTime = new Date().toISOString();
 
     console.log(
-      `${currentTime} - ${req.method} ${req.originalUrl} - ${statusCode} - ${timeColor}${time.toFixed(2)}ms\x1b[0m`,
+      `${currentTime} - ${req.method} ${req.originalUrl} - ${statusCode} - ${timeColor}${time.toFixed(2)}ms`
     );
   });
 

@@ -46,10 +46,23 @@ const checkSeatAvailability = async (showTimeSeatId: number): Promise<boolean> =
   return results[0].status === "available";
 };
 
+const updateExpiredBookingSeat = async (id: number): Promise<number> => {
+  const query = `
+    UPDATE showtime_seats
+    SET status = 'available'
+    WHERE id = ?;
+  `;
+  const values = [id];
+
+  const [result] = await pool.query<ResultSetHeader>(query, values);
+  return result.affectedRows;
+};
+
 const showTimeSeatRepository = {
   addShowTimeSeat,
   updateShowTimeSeat,
   checkSeatAvailability,
+  updateExpiredBookingSeat
 };
 
 export default showTimeSeatRepository;
