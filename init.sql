@@ -98,3 +98,68 @@ CREATE TABLE `bookings` (
   CONSTRAINT `bookings_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `bookings_ibfk_2` FOREIGN KEY (`showtime_seat_id`) REFERENCES `showtime_seats` (`id`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 12 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+-- Inserting data into actors
+INSERT INTO `actors` (`name`)
+VALUES ('Actor 1'),
+  ('Actor 2'),
+  ('Actor 3');
+-- Inserting data into movies
+INSERT INTO `movies` (
+    `title`,
+    `overview`,
+    `duration`,
+    `director`,
+    `genre`,
+    `rating`,
+    `release_date`
+  )
+VALUES (
+    'Movie 1',
+    'Overview 1',
+    120,
+    'Director 1',
+    'Genre 1',
+    'PG-13',
+    '2022-01-01'
+  ),
+  (
+    'Movie 2',
+    'Overview 2',
+    150,
+    'Director 2',
+    'Genre 2',
+    'R',
+    '2022-02-01'
+  );
+-- Inserting data into seats
+INSERT INTO `seats` (`seat_number`)
+VALUES ('A1'),
+  ('A2'),
+  ('A3');
+-- Inserting data into users
+INSERT INTO `users` (`username`, `password`, `email`, `is_admin`)
+VALUES ('user1', 'password1', 'user1@example.com', 0),
+  ('admin', 'password2', 'admin@example.com', 1);
+-- Inserting data into movie_casts
+INSERT INTO `movie_casts` (`movie_id`, `actor_id`)
+VALUES (1, 1),
+  (1, 2),
+  (2, 3);
+-- Inserting data into movie_shows
+INSERT INTO `movie_shows` (`movie_id`, `price`, `show_time`, `status`)
+VALUES (1, 10, '2022-03-01 10:00:00', 'upcoming'),
+  (2, 15, '2022-03-02 12:00:00', 'now_showing');
+-- Inserting data into showtime_seats
+INSERT INTO `showtime_seats` (`movie_show_id`, `seat_id`, `status`)
+VALUES (1, 1, 'available'),
+  (1, 2, 'booked'),
+  (2, 3, 'available');
+-- Inserting data into bookings
+INSERT INTO `bookings` (
+    `booking_code`,
+    `user_id`,
+    `showtime_seat_id`,
+    `status`
+  )
+VALUES ('BOOK123', 1, 1, 'pending'),
+  ('BOOK456', 2, 2, 'confirmed');
