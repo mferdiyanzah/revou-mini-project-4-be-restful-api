@@ -3,16 +3,17 @@ import {
   type Request, type Response
 } from "express";
 
-import { decodeToken } from "../utils/jwt";
+import { decode, type JwtPayload } from "jsonwebtoken";
+
 import responseHandler from "../utils/response-handler";
 
-const verifyRequestToken = (req: Request): boolean => {
-  const token = req.headers.authorization;
-  if (token == null) {
-    throw new Error("Token is required");
+// Function to extract and decode the token
+const extractAndDecodeToken = (req: Request): JwtPayload | null => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (token === undefined || token === null || token === "") {
+    return null;
   }
-
-  return true;
+  return decode(token) as JwtPayload;
 };
 
 const authMiddleware = async (
@@ -21,7 +22,11 @@ const authMiddleware = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    verifyRequestToken(req);
+    const decoded = extractAndDecodeToken(req);
+    if (decoded === null) {
+      responseHandler(res, 401, "Token is required", false);
+      return;
+    }
     next();
   } catch (er) {
     if (er instanceof Error) {
@@ -35,24 +40,16 @@ const adminMiddleware = async (
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
-  try {
-    if (!verifyRequestToken(req)) return;
-
-    const authHeader = req.headers.authorization ?? '';
-    const decoded = decodeToken(authHeader);
-
-    console.log(decoded);
-    if (decoded?.isAdmin !== 1) {
-      throw new Error("Unauthorized");
-    }
-
-    next();
-  } catch (er) {
-    if (er instanceof Error) {
-      responseHandler(res, 401, er.message, false);
-    }
+  const decoded = extractAndDecodeToken(req);
+  if (decoded === null) {
+    responseHandler(res, 401, "Token is required", false);
+    return;
   }
+  if (decoded.isAdmin !== 1) {
+    responseHandler(res, 403, "Unauthorized", false);
+    return;
+  }
+  next();
 };
 
-export { authMiddleware, adminMiddleware };
-
+export { adminMiddleware, authMiddleware };

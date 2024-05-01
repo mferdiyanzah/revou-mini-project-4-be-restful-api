@@ -33,14 +33,22 @@ const updateShowTime = async (req: Request, res: Response): Promise<void> => {
       throw new Error("Showtime ID is required");
     }
 
-    const request = req.body as UpdateMovieShowRequest;
-    if (request === undefined) {
+    const updateShowTimerequest = req.body as UpdateMovieShowRequest;
+    if (updateShowTimerequest === undefined) {
       throw new Error("Request body is required");
     }
 
-    request.id = parseInt(id);
+    const { show_time, status } = updateShowTimerequest;
 
-    await movieShowTimeService.updateShowTime(request);
+    if (status === "now_showing") {
+      if (show_time === undefined) {
+        throw new Error("Show time is required for now showing status");
+      }
+    }
+
+    updateShowTimerequest.id = parseInt(id);
+
+    await movieShowTimeService.updateShowTime(updateShowTimerequest);
     responseHandler(res, 200, "OK", true);
   } catch (er) {
     if (er instanceof Error) {
@@ -63,7 +71,9 @@ const deleteShowTime = async (req: Request, res: Response): Promise<void> => {
 };
 
 const movieShowTimeController = {
-  addShowTime, updateShowTime, deleteShowTime
+  addShowTime,
+  updateShowTime,
+  deleteShowTime
 };
 
 export default movieShowTimeController;

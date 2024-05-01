@@ -1,13 +1,18 @@
 import { type Request, type Response } from "express";
 
-import { type UserLoginRequest, type UserRegisterRequest } from "../models/user.model";
+import { type UserLoginRequest } from "../models/user.model";
 import { userService } from "../services";
 import { validateRequest } from "../utils/global";
 import responseHandler from "../utils/response-handler";
 
 const register = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userRegisterRequest: UserRegisterRequest = req.body;
+    const userRegisterRequest = {
+      username: req.body.username,
+      email: req.body.email,
+      password: req.body.password,
+      isAdmin: req.body.is_admin,
+    };
     const requiredKeys = ["username", "email", "password"];
     const isRequestInvalid = !validateRequest(requiredKeys, userRegisterRequest);
 

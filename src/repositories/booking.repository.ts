@@ -20,7 +20,9 @@ const addBooking = async (booking: AddBookingRequest): Promise<number> => {
 
 const getBookingByCode = async (bookingCode: string): Promise<BookingModel> => {
   const query = `
-    SELECT * FROM bookings WHERE booking_code = ?;
+    SELECT * 
+    FROM bookings 
+    WHERE booking_code = ?;
   `;
   const values = [bookingCode];
 

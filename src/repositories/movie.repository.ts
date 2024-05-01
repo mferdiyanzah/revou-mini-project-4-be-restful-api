@@ -68,9 +68,9 @@ const getMovieById = async (id: string): Promise<MovieDetailQueryResponse[]> => 
     WHERE m.id = ? AND m.deleted_at IS NULL;
   `;
 
-  const [rows] = await pool.execute<RowDataPacket[]>(query, [id]);
+  const [results] = await pool.execute<RowDataPacket[]>(query, [id]);
 
-  return rows as MovieDetailQueryResponse[];
+  return results as MovieDetailQueryResponse[];
 };
 
 const addMovieActors = async ({ movie_id, actor_id }: AddMovieActorRequest): Promise<void> => {
@@ -141,7 +141,7 @@ const getMoviesNowPlaying = async (): Promise<GetAllMoviesNowPlayingQueryResult[
       m.overview 
     FROM movie_shows ms
     JOIN movies m ON ms.movie_id = m.id
-    WHERE ms.status = 'now_playing' AND m.deleted_at IS NULL;
+    WHERE ms.status = 'now_showing' AND m.deleted_at IS NULL;
   `;
 
   const [results] = await pool.query<RowDataPacket[]>(query);

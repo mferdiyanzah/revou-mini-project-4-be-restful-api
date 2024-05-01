@@ -49,7 +49,7 @@ describe("User Service", () => {
       (userRepository.findUserByEmail as jest.Mock).mockResolvedValue(userMock);
       (verifyPassword as jest.Mock).mockResolvedValue(true);
 
-      const token = await userService.login(userMock.email, userMock.password);
+      const token = await userService.login(userMock);
 
       expect(token).toBeDefined();
     });
@@ -57,7 +57,7 @@ describe("User Service", () => {
     it("should throw error if user not found", async () => {
       (userRepository.findUserByEmail as jest.Mock).mockResolvedValue(null);
 
-      await expect(userService.login(userMock.email, userMock.password)).rejects.toThrow(
+      await expect(userService.login(userMock)).rejects.toThrow(
         "Invalid credentials"
       );
     });
@@ -66,7 +66,7 @@ describe("User Service", () => {
       (userRepository.findUserByEmail as jest.Mock).mockResolvedValue(userMock);
       (verifyPassword as jest.Mock).mockResolvedValue(false);
 
-      await expect(userService.login(userMock.email, userMock.password)).rejects.toThrow(
+      await expect(userService.login(userMock)).rejects.toThrow(
         "Invalid credentials"
       );
     });

@@ -43,10 +43,20 @@ const addShowTime = async (request: MovieShowRequest): Promise<number> => {
 };
 
 const deleteShowTime = async (showTimeId: string): Promise<number> => {
+  const showTime = await movieShowTimeRepository.getShowTimeById(parseInt(showTimeId));
+
+  if (showTime === undefined) throw new Error("Show time not found");
+
   return await movieShowTimeRepository.deleteShowTime(showTimeId);
 };
 
 const updateShowTime = async (request: UpdateMovieShowRequest): Promise<number> => {
+  const { id } = request;
+  const showTime = await movieShowTimeRepository.getShowTimeById(id);
+
+  if (showTime === undefined) throw new Error("Show time not found");
+  if (showTime.status === 'finished') throw new Error("Show time is finished");
+
   return await movieShowTimeRepository.updateShowTime(request);
 };
 

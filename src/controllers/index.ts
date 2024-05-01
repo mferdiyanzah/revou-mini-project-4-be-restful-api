@@ -4,5 +4,8 @@ import movieController from "./movie.controller";
 import userController from "./user.controller";
 
 export {
-  userController, movieController, bookingController, movieShowTimeController
+  userController,
+  movieController,
+  bookingController,
+  movieShowTimeController
 };

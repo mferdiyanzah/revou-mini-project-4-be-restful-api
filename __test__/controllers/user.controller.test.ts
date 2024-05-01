@@ -53,7 +53,7 @@ describe('User Controller', () => {
       await userController.register(req, res);
 
       expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ message: 'Name, email, and password are required' }));
+      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ message: 'Username, email, and password are required' }));
     });
   });
 
@@ -71,7 +71,7 @@ describe('User Controller', () => {
 
       await userController.login(req, res);
 
-      expect(userService.login).toHaveBeenCalledWith(requestBody.email, requestBody.password);
+      expect(userService.login).toHaveBeenCalledWith(requestBody);
 
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ data: { token: expectedToken }, }));

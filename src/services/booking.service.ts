@@ -6,6 +6,7 @@ import {
 } from "../models/booking.model";
 import { showTimeSeatRepository } from "../repositories";
 import bookingRepository from "../repositories/booking.repository";
+import { INTERVAL_FIFTEEN_MINUTES } from "../utils/const";
 
 const addBooking = async (bookingPayload: AddBookingPayload): Promise<string> => {
   const connection = await pool.getConnection();
@@ -41,10 +42,17 @@ const updateBookingStatus = async (updateBookingStatusRequest: UpdateBookingStat
   const { bookingId, status, userId } = updateBookingStatusRequest;
 
   const booking = await bookingRepository.getBookingByCode(bookingId);
-  if (booking === undefined) throw new Error("Booking not found");
-  if (booking.user_id !== userId) throw new Error("Unauthorized access");
-  if (booking.status === "confirmed") throw new Error("Booking already confirmed");
-  if (booking.created_at < new Date(Date.now() - 15 * 60 * 1000)) throw new Error("Booking expired");
+
+  const isBookingUndefined = booking === undefined;
+  if (isBookingUndefined) throw new Error("Booking not found");
+
+  const isBookingNotMatch = booking?.user_id !== userId;
+  const isBookingConfirmed = booking?.status === "confirmed";
+  const isBookingExpired = booking.created_at < new Date(Date.now() - INTERVAL_FIFTEEN_MINUTES);
+
+  if (isBookingNotMatch) throw new Error("Unauthorized access");
+  if (isBookingConfirmed) throw new Error("Booking already confirmed");
+  if (isBookingExpired) throw new Error("Booking expired");
 
   const result = await bookingRepository.updateBookingStatus(bookingId, status);
   return result;

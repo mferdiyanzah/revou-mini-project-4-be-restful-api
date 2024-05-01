@@ -2,13 +2,13 @@
   "openapi": "3.0.3",
   "info": {
     "title": "CinePrime",
-    "description": "CinePrime is the best itw",
+    "description": "CinePrime is a movie booking platform that allows users to book movies and watch them in the cinema.",
     "version": "1.0.0",
     "contact": {}
   },
   "servers": [
     {
-      "url": "localhost:3000/api/v1"
+      "url": "/api/v1"
     }
   ],
   "paths": {
@@ -17,30 +17,120 @@
         "tags": [
           "Auth"
         ],
-        "summary": "Login",
-        "description": "Login a user",
-        "operationId": "login",
+        "summary": "Authenticate a user",
+        "description": "Authenticate a user by their email and password. Returns a JWT token upon successful authentication.",
+        "operationId": "authenticateUser",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "user1@mail.com"
+                  },
                   "password": {
                     "type": "string",
-                    "example": "user 2"
+                    "example": "user 1"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "type": "string",
+                          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImVtYWlsIjoidXNlcjJAbWFpbC5jb20iLCJpYXQiOjE3MTMyNDU0MDAsImV4cCI6MTcxMzI0OTAwMH0.80wDna7zEJb534FMVJGK8Tz5n4RS8oc10q_3MmLldmw"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User logged in successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid credentials"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Register",
+        "description": "Register a new user with their email, username, password, and isAdmin status. Returns a JWT token upon successful registration.",
+        "operationId": "register",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "user1@mail.com"
+                  },
+                  "is_admin": {
+                    "type": "number",
+                    "example": 0
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "user 1"
                   },
                   "username": {
                     "type": "string",
-                    "example": "user 2"
+                    "example": "user 1"
                   }
                 }
               },
               "examples": {
-                "Login": {
+                "Register": {
                   "value": {
-                    "password": "user 2",
-                    "username": "user 2"
+                    "email": "user1@mail.com",
+                    "is_admin": 0,
+                    "password": "user 1",
+                    "username": "user 1"
                   }
                 }
               }
@@ -77,7 +167,7 @@
                 "examples": {
                   "201 Created": {
                     "value": {
-                      "code": 201,
+                      "code": 200,
                       "data": {
                         "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImVtYWlsIjoidXNlcjJAbWFpbC5jb20iLCJpYXQiOjE3MTMyNDU0MDAsImV4cCI6MTcxMzI0OTAwMH0.80wDna7zEJb534FMVJGK8Tz5n4RS8oc10q_3MmLldmw"
                       },
@@ -87,18 +177,1920 @@
                 }
               }
             }
+          },
+          "409": {
+            "description": "409 User Already Exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number",
+                      "example": 409
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User already exists"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    }
+                  }
+                },
+                "examples": {
+                  "409 User Already Exist": {
+                    "value": {
+                      "code": 409,
+                      "message": "User already exists",
+                      "success": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/movie/all": {
+      "get": {
+        "tags": [
+          "Movies"
+        ],
+        "summary": "Get All Movies",
+        "description": "Get All Movies",
+        "operationId": "getAllMovies",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "10"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "",
+              "nullable": true
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "release_date"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "desc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200 OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number",
+                      "example": 200
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "limit": {
+                          "type": "number",
+                          "example": 10
+                        },
+                        "page": {
+                          "type": "number",
+                          "example": 1
+                        },
+                        "results": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "director": {
+                                "type": "string",
+                                "example": "James Cameroon"
+                              },
+                              "duration": {
+                                "type": "number",
+                                "example": 130
+                              },
+                              "genre": {
+                                "type": "string",
+                                "example": "Fantasy"
+                              },
+                              "id": {
+                                "type": "number",
+                                "example": 41
+                              },
+                              "overview": {
+                                "type": "string",
+                                "example": "In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission"
+                              },
+                              "rating": {
+                                "type": "string",
+                                "example": "PG"
+                              },
+                              "release_date": {
+                                "type": "string",
+                                "example": "2024-03-25T17:00:00.000Z"
+                              },
+                              "title": {
+                                "type": "string",
+                                "example": "Dune"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "director": "James Cameroon",
+                              "duration": 130,
+                              "genre": "Fantasy",
+                              "id": 41,
+                              "overview": "In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission",
+                              "rating": "PG",
+                              "release_date": "2024-03-25T17:00:00.000Z",
+                              "title": "Dune"
+                            },
+                            {
+                              "director": "James Cameroon",
+                              "duration": 130,
+                              "genre": "Fantasy",
+                              "id": 42,
+                              "overview": "In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission",
+                              "rating": "PG",
+                              "release_date": "2024-03-25T17:00:00.000Z",
+                              "title": "Dune"
+                            },
+                            {
+                              "director": "James Cameroon",
+                              "duration": 130,
+                              "genre": "Fantasy",
+                              "id": 43,
+                              "overview": "In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission",
+                              "rating": "PG",
+                              "release_date": "2024-03-25T17:00:00.000Z",
+                              "title": "Dune: Part Two"
+                            },
+                            {
+                              "director": "James Cameroon",
+                              "duration": 130,
+                              "genre": "Fantasy",
+                              "id": 44,
+                              "overview": "In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission",
+                              "rating": "PG",
+                              "release_date": "2024-03-25T17:00:00.000Z",
+                              "title": "Dune: Part Two"
+                            }
+                          ],
+                          "page":1,
+                          "limit":10
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "OK"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                },
+                "examples": {
+                  "200 OK": {
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "limit": 10,
+                        "page": 1,
+                        "results": [
+                          {
+                            "director": "James Cameroon",
+                            "duration": 130,
+                            "genre": "Fantasy",
+                            "id": 41,
+                            "overview": "In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission",
+                            "rating": "PG",
+                            "release_date": "2024-03-25T17:00:00.000Z",
+                            "title": "Dune"
+                          },
+                          {
+                            "director": "James Cameroon",
+                            "duration": 130,
+                            "genre": "Fantasy",
+                            "id": 42,
+                            "overview": "In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission",
+                            "rating": "PG",
+                            "release_date": "2024-03-25T17:00:00.000Z",
+                            "title": "Dune"
+                          },
+                          {
+                            "director": "James Cameroon",
+                            "duration": 130,
+                            "genre": "Fantasy",
+                            "id": 43,
+                            "overview": "In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission",
+                            "rating": "PG",
+                            "release_date": "2024-03-25T17:00:00.000Z",
+                            "title": "Dune: Part Two"
+                          },
+                          {
+                            "director": "James Cameroon",
+                            "duration": 130,
+                            "genre": "Fantasy",
+                            "id": 44,
+                            "overview": "In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission",
+                            "rating": "PG",
+                            "release_date": "2024-03-25T17:00:00.000Z",
+                            "title": "Dune: Part Two"
+                          }
+                        ]
+                      },
+                      "message": "OK",
+                      "success": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/movie/{id}": {
+      "get": {
+        "tags": [
+          "Movies"
+        ],
+        "summary": "Get Movie by ID",
+        "description": "Get Movie by ID",
+        "operationId": "getMovieById",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "AREA_CODE": {
+                    "type": "string",
+                    "example": "BDG"
+                  },
+                  "AREA_ID": {
+                    "type": "number",
+                    "example": 2
+                  },
+                  "COMPANY_CODE": {
+                    "type": "string",
+                    "example": "DXM"
+                  },
+                  "COMPANY_ID": {
+                    "type": "number",
+                    "example": 1
+                  },
+                  "EMPLOYEE_NAME": {
+                    "type": "string",
+                    "example": "edwin.dharmawan@dexagroup.com"
+                  },
+                  "INSERTED_BY": {
+                    "type": "string",
+                    "example": "edwin.dharmawan@dexagroup.com"
+                  },
+                  "LINES": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "LINE_CODE": {
+                          "type": "string",
+                          "example": "VICTORY"
+                        },
+                        "LINE_ID": {
+                          "type": "number",
+                          "example": 1
+                        }
+                      }
+                    },
+                    "example": [
+                      {
+                        "LINE_CODE": "VICTORY",
+                        "LINE_ID": 1
+                      },
+                      {
+                        "LINE_CODE": "HARMONY",
+                        "LINE_ID": 2
+                      }
+                    ]
+                  },
+                  "PDPO_DISCOUNT_TYPE_CODE": {
+                    "type": "string",
+                    "example": "AP"
+                  },
+                  "PDPO_DISCOUNT_TYPE_ID": {
+                    "type": "number",
+                    "example": 2
+                  },
+                  "POSITION_CODE": {
+                    "type": "string",
+                    "example": "CSO"
+                  },
+                  "RAYON_CODE": {
+                    "type": "string",
+                    "example": "AAMSDRCSO01"
+                  },
+                  "REF_DOCNO": {
+                    "type": "string",
+                    "example": "PD/PO-DXM/BDG/202403/NG/0010"
+                  },
+                  "REF_ID": {
+                    "type": "number",
+                    "example": 296
+                  },
+                  "STRUCTURE_LIST": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "AREA_BASED_CODE": {
+                          "type": "string",
+                          "example": "SIDOARJO"
+                        },
+                        "AREA_BASED_ID": {
+                          "type": "number",
+                          "example": 407
+                        },
+                        "AREA_CODE": {
+                          "type": "string",
+                          "example": "SDR"
+                        },
+                        "AREA_ID": {
+                          "type": "number",
+                          "example": 53
+                        },
+                        "COMPANY_CODE": {
+                          "type": "string",
+                          "example": "AAM"
+                        },
+                        "COMPANY_ID": {
+                          "type": "number",
+                          "example": 5
+                        },
+                        "EMPLOYEE_ID": {
+                          "type": "string",
+                          "nullable": true,
+                          "example": "DXM1203V007"
+                        },
+                        "EMPLOYEE_NAME": {
+                          "type": "string",
+                          "nullable": true,
+                          "example": "VACANT-CSO-3941"
+                        },
+                        "END_DATE_EMPLOYEE": {
+                          "type": "string",
+                          "example": "4001-01-01 00:00:00"
+                        },
+                        "END_DATE_RAYON": {
+                          "type": "string",
+                          "example": "4001-01-01 00:00:00"
+                        },
+                        "INCENTIVE_MR_TYPE": {
+                          "type": "string",
+                          "example": "0"
+                        },
+                        "IS_DUMMY": {
+                          "type": "number",
+                          "nullable": true,
+                          "example": 0
+                        },
+                        "IS_STATION": {
+                          "type": "number",
+                          "example": 0
+                        },
+                        "IS_VACANT": {
+                          "type": "number",
+                          "example": 0
+                        },
+                        "LAST_SYNC": {
+                          "type": "string",
+                          "nullable": true,
+                          "example": "2023-02-02 16:13:37"
+                        },
+                        "LINE_BASED_CODE": {
+                          "type": "string",
+                          "nullable": true,
+                          "example": "ALL"
+                        },
+                        "LINE_BASED_ID": {
+                          "type": "number",
+                          "nullable": true,
+                          "example": 42
+                        },
+                        "LINE_CODE": {
+                          "type": "string",
+                          "nullable": true,
+                          "example": "ALL"
+                        },
+                        "LINE_ID": {
+                          "type": "number",
+                          "nullable": true,
+                          "example": 28
+                        },
+                        "MANAGEMENT_MR_TYPE": {
+                          "type": "string",
+                          "example": "0"
+                        },
+                        "PERIODE_END": {
+                          "type": "string",
+                          "example": "2024-04-30"
+                        },
+                        "PERIODE_START": {
+                          "type": "string",
+                          "example": "2024-04-01"
+                        },
+                        "POSITION_CODE": {
+                          "type": "string",
+                          "nullable": true,
+                          "example": "CSO"
+                        },
+                        "POSITION_ID": {
+                          "type": "number",
+                          "nullable": true,
+                          "example": 110
+                        },
+                        "RAYON_CODE": {
+                          "type": "string",
+                          "nullable": true,
+                          "example": "AAMSDRCSO01"
+                        },
+                        "RAYON_CODE_REPORT_TO": {
+                          "type": "string",
+                          "nullable": true,
+                          "example": null
+                        },
+                        "RAYON_GROUP_CODE": {
+                          "type": "string",
+                          "nullable": true,
+                          "example": "AAMSDRCSO01"
+                        },
+                        "RAYON_GROUP_ID": {
+                          "type": "number",
+                          "nullable": true,
+                          "example": 21073
+                        },
+                        "RAYON_ID": {
+                          "type": "number",
+                          "nullable": true,
+                          "example": 21073
+                        },
+                        "RAYON_ID_REPORT_TO": {
+                          "type": "number",
+                          "nullable": true,
+                          "example": null
+                        },
+                        "START_DATE_EMPLOYEE": {
+                          "type": "string",
+                          "example": "2012-04-01 00:00:00"
+                        },
+                        "START_DATE_RAYON": {
+                          "type": "string",
+                          "example": "2012-04-01 00:00:00"
+                        },
+                        "TERRITORY": {
+                          "type": "string",
+                          "example": ""
+                        }
+                      }
+                    },
+                    "example": [
+                      {
+                        "AREA_BASED_CODE": "SIDOARJO",
+                        "AREA_BASED_ID": 407,
+                        "AREA_CODE": "SDR",
+                        "AREA_ID": 53,
+                        "COMPANY_CODE": "AAM",
+                        "COMPANY_ID": 5,
+                        "EMPLOYEE_ID": "DXM1203V007",
+                        "EMPLOYEE_NAME": "VACANT-CSO-3941",
+                        "END_DATE_EMPLOYEE": "4001-01-01 00:00:00",
+                        "END_DATE_RAYON": "4001-01-01 00:00:00",
+                        "INCENTIVE_MR_TYPE": "0",
+                        "IS_DUMMY": 0,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 0,
+                        "LAST_SYNC": "2023-02-02 16:13:37",
+                        "LINE_BASED_CODE": "ALL",
+                        "LINE_BASED_ID": 42,
+                        "LINE_CODE": "ALL",
+                        "LINE_ID": 28,
+                        "MANAGEMENT_MR_TYPE": "0",
+                        "PERIODE_END": "2024-04-30",
+                        "PERIODE_START": "2024-04-01",
+                        "POSITION_CODE": "CSO",
+                        "POSITION_ID": 110,
+                        "RAYON_CODE": "AAMSDRCSO01",
+                        "RAYON_CODE_REPORT_TO": null,
+                        "RAYON_GROUP_CODE": "AAMSDRCSO01",
+                        "RAYON_GROUP_ID": 21073,
+                        "RAYON_ID": 21073,
+                        "RAYON_ID_REPORT_TO": null,
+                        "START_DATE_EMPLOYEE": "2012-04-01 00:00:00",
+                        "START_DATE_RAYON": "2012-04-01 00:00:00",
+                        "TERRITORY": ""
+                      },
+                      {
+                        "AREA_BASED_CODE": "HO",
+                        "AREA_BASED_ID": 59,
+                        "AREA_CODE": "HO",
+                        "AREA_ID": 10,
+                        "COMPANY_CODE": "DXM",
+                        "COMPANY_ID": 1,
+                        "EMPLOYEE_ID": "DX012090822",
+                        "EMPLOYEE_NAME": "Budi Lesmono",
+                        "INCENTIVE_MR_TYPE": "HOSPITAL",
+                        "IS_DUMMY": 0,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 0,
+                        "LINE_BASED_CODE": "FBIJUVN",
+                        "LINE_BASED_ID": 177,
+                        "LINE_CODE": "VICTORY",
+                        "LINE_ID": 1,
+                        "MANAGEMENT_MR_TYPE": "HOSPITAL",
+                        "PERIODE_END": "2024-04-30",
+                        "PERIODE_START": "2024-04-01",
+                        "POSITION_CODE": "SM",
+                        "POSITION_ID": 15,
+                        "RAYON_CODE": "SMVIC03",
+                        "RAYON_CODE_REPORT_TO": "NSMVIC01",
+                        "RAYON_GROUP_CODE": "SMVIC03",
+                        "RAYON_GROUP_ID": 3011,
+                        "RAYON_ID": 3011,
+                        "RAYON_ID_REPORT_TO": 3018,
+                        "TERRITORY": ""
+                      },
+                      {
+                        "AREA_BASED_CODE": "HO",
+                        "AREA_BASED_ID": 59,
+                        "AREA_CODE": "HO",
+                        "AREA_ID": 10,
+                        "COMPANY_CODE": "DXM",
+                        "COMPANY_ID": 1,
+                        "EMPLOYEE_ID": "DX996100050",
+                        "EMPLOYEE_NAME": "Suharmin",
+                        "INCENTIVE_MR_TYPE": "HOSPITAL",
+                        "IS_DUMMY": 0,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 0,
+                        "LINE_BASED_CODE": "FBIJUVN",
+                        "LINE_BASED_ID": 177,
+                        "LINE_CODE": "VICTORY",
+                        "LINE_ID": 1,
+                        "MANAGEMENT_MR_TYPE": "HOSPITAL",
+                        "PERIODE_END": "2024-04-30",
+                        "PERIODE_START": "2024-04-01",
+                        "POSITION_CODE": "NSM",
+                        "POSITION_ID": 10,
+                        "RAYON_CODE": "NSMVIC01",
+                        "RAYON_CODE_REPORT_TO": "HMSVIC01",
+                        "RAYON_GROUP_CODE": "NSMVIC01",
+                        "RAYON_GROUP_ID": 3018,
+                        "RAYON_ID": 3018,
+                        "RAYON_ID_REPORT_TO": 3016,
+                        "TERRITORY": ""
+                      },
+                      {
+                        "AREA_BASED_CODE": "HO",
+                        "AREA_BASED_ID": 59,
+                        "AREA_CODE": "HO",
+                        "AREA_ID": 10,
+                        "COMPANY_CODE": "DXM",
+                        "COMPANY_ID": 1,
+                        "EMPLOYEE_ID": "DX000010044",
+                        "EMPLOYEE_NAME": "SURYA WIBOWO",
+                        "INCENTIVE_MR_TYPE": "HOSPITAL",
+                        "IS_DUMMY": 0,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 0,
+                        "LINE_BASED_CODE": "FBIJUVN",
+                        "LINE_BASED_ID": 177,
+                        "LINE_CODE": "VICTORY",
+                        "LINE_ID": 1,
+                        "MANAGEMENT_MR_TYPE": "HOSPITAL",
+                        "PERIODE_END": "2024-04-30",
+                        "PERIODE_START": "2024-04-01",
+                        "POSITION_CODE": "HMS",
+                        "POSITION_ID": 6,
+                        "RAYON_CODE": "HMSVIC01",
+                        "RAYON_CODE_REPORT_TO": "DXMDIRSLS",
+                        "RAYON_GROUP_CODE": "HMSVIC01",
+                        "RAYON_GROUP_ID": 3016,
+                        "RAYON_ID": 3016,
+                        "RAYON_ID_REPORT_TO": 30812,
+                        "TERRITORY": ""
+                      },
+                      {
+                        "AREA_BASED_CODE": "HO",
+                        "AREA_BASED_ID": 59,
+                        "AREA_CODE": "HO",
+                        "AREA_ID": 10,
+                        "COMPANY_CODE": "DXM",
+                        "COMPANY_ID": 1,
+                        "EMPLOYEE_ID": "DX998050022",
+                        "EMPLOYEE_NAME": "Marimin",
+                        "INCENTIVE_MR_TYPE": "NA",
+                        "IS_DUMMY": 0,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 0,
+                        "LINE_BASED_CODE": "ALL",
+                        "LINE_BASED_ID": 42,
+                        "LINE_CODE": "HO",
+                        "LINE_ID": 23,
+                        "MANAGEMENT_MR_TYPE": "NA",
+                        "PERIODE_END": "2024-04-30",
+                        "PERIODE_START": "2024-04-01",
+                        "POSITION_CODE": "DIR",
+                        "POSITION_ID": 120,
+                        "RAYON_CODE": "DXMDIRSLS",
+                        "RAYON_CODE_REPORT_TO": "DIRCOM01",
+                        "RAYON_GROUP_CODE": "DXMDIRSLS",
+                        "RAYON_GROUP_ID": 30812,
+                        "RAYON_ID": 30812,
+                        "RAYON_ID_REPORT_TO": 3021,
+                        "TERRITORY": ""
+                      },
+                      {
+                        "AREA_BASED_CODE": "HO",
+                        "AREA_BASED_ID": 59,
+                        "AREA_CODE": "HO",
+                        "AREA_ID": 10,
+                        "COMPANY_CODE": "FPP",
+                        "COMPANY_ID": 2,
+                        "EMPLOYEE_ID": "FP018090255",
+                        "EMPLOYEE_NAME": "Herry Sutana",
+                        "END_DATE_EMPLOYEE": "4001-01-01 00:00:00",
+                        "END_DATE_RAYON": "4012-01-01 00:00:00.000",
+                        "INCENTIVE_MR_TYPE": "HOSPITAL",
+                        "IS_DUMMY": null,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 0,
+                        "LAST_SYNC": "2023-12-27 02:03:12",
+                        "LINE_BASED_CODE": "MS",
+                        "LINE_BASED_ID": 29,
+                        "LINE_CODE": "MS",
+                        "LINE_ID": 9,
+                        "MANAGEMENT_MR_TYPE": "HOSPITAL",
+                        "PERIODE_END": "2024-04-30",
+                        "PERIODE_START": "2024-04-01",
+                        "POSITION_CODE": "MGRMS",
+                        "POSITION_ID": 53,
+                        "RAYON_CODE": "FPPMGRMS01",
+                        "RAYON_CODE_REPORT_TO": "FPPHMSOPT01",
+                        "RAYON_GROUP_CODE": "FPPMGRMS01",
+                        "RAYON_GROUP_ID": 21034,
+                        "RAYON_ID": 21034,
+                        "RAYON_ID_REPORT_TO": 29244,
+                        "START_DATE_EMPLOYEE": "2018-10-01 00:00:00",
+                        "START_DATE_RAYON": "2011-01-01 00:00:00.000",
+                        "TERRITORY": ""
+                      },
+                      {
+                        "AREA_BASED_CODE": "HO",
+                        "AREA_BASED_ID": 59,
+                        "AREA_CODE": "HO",
+                        "AREA_ID": 10,
+                        "COMPANY_CODE": "DXM",
+                        "COMPANY_ID": 1,
+                        "EMPLOYEE_ID": "DX009100652",
+                        "EMPLOYEE_NAME": "Ignatius Edward Budijono",
+                        "INCENTIVE_MR_TYPE": "HOSPITAL",
+                        "IS_DUMMY": null,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 0,
+                        "LINE_BASED_CODE": "HP",
+                        "LINE_BASED_ID": 17,
+                        "LINE_CODE": "HARMONY",
+                        "LINE_ID": 2,
+                        "MANAGEMENT_MR_TYPE": "HOSPITAL",
+                        "PERIODE_END": "2024-04-30",
+                        "PERIODE_START": "2024-04-01",
+                        "POSITION_CODE": "SM",
+                        "POSITION_ID": 15,
+                        "RAYON_CODE": "SMHAY05",
+                        "RAYON_CODE_REPORT_TO": "NSMHAY01",
+                        "RAYON_GROUP_CODE": "SMHAY05",
+                        "RAYON_GROUP_ID": 3008,
+                        "RAYON_ID": 3008,
+                        "RAYON_ID_REPORT_TO": 3019,
+                        "TERRITORY": ""
+                      },
+                      {
+                        "AREA_BASED_CODE": "HO",
+                        "AREA_BASED_ID": 59,
+                        "AREA_CODE": "HO",
+                        "AREA_ID": 10,
+                        "COMPANY_CODE": "DXM",
+                        "COMPANY_ID": 1,
+                        "EMPLOYEE_ID": "DX005110630",
+                        "EMPLOYEE_NAME": "Efendy",
+                        "INCENTIVE_MR_TYPE": "HOSPITAL",
+                        "IS_DUMMY": null,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 0,
+                        "LINE_BASED_CODE": "HP",
+                        "LINE_BASED_ID": 17,
+                        "LINE_CODE": "HARMONY",
+                        "LINE_ID": 2,
+                        "MANAGEMENT_MR_TYPE": "HOSPITAL",
+                        "PERIODE_END": "2024-04-30",
+                        "PERIODE_START": "2024-04-01",
+                        "POSITION_CODE": "NSM",
+                        "POSITION_ID": 10,
+                        "RAYON_CODE": "NSMHAY01",
+                        "RAYON_CODE_REPORT_TO": "HMSHAY01",
+                        "RAYON_GROUP_CODE": "NSMHAY01",
+                        "RAYON_GROUP_ID": 3019,
+                        "RAYON_ID": 3019,
+                        "RAYON_ID_REPORT_TO": 3017,
+                        "TERRITORY": ""
+                      },
+                      {
+                        "AREA_BASED_CODE": "HO",
+                        "AREA_BASED_ID": 59,
+                        "AREA_CODE": "HO",
+                        "AREA_ID": 10,
+                        "COMPANY_CODE": "DXM",
+                        "COMPANY_ID": 1,
+                        "EMPLOYEE_ID": "DXM1808V006",
+                        "EMPLOYEE_NAME": "VACANT-HMS01-1955",
+                        "INCENTIVE_MR_TYPE": "HOSPITAL",
+                        "IS_DUMMY": null,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 1,
+                        "LINE_BASED_CODE": "HP",
+                        "LINE_BASED_ID": 17,
+                        "LINE_CODE": "HARMONY",
+                        "LINE_ID": 2,
+                        "MANAGEMENT_MR_TYPE": "HOSPITAL",
+                        "PERIODE_END": "2024-04-30",
+                        "PERIODE_START": "2024-04-01",
+                        "POSITION_CODE": "HMS",
+                        "POSITION_ID": 6,
+                        "RAYON_CODE": "HMSHAY01",
+                        "RAYON_CODE_REPORT_TO": "DXMDIRSLS",
+                        "RAYON_GROUP_CODE": "HMSHAY01",
+                        "RAYON_GROUP_ID": 3017,
+                        "RAYON_ID": 3017,
+                        "RAYON_ID_REPORT_TO": 30812,
+                        "TERRITORY": ""
+                      },
+                      {
+                        "AREA_BASED_CODE": "HO",
+                        "AREA_BASED_ID": 59,
+                        "AREA_CODE": "HO",
+                        "AREA_ID": 10,
+                        "COMPANY_CODE": "DXM",
+                        "COMPANY_ID": 1,
+                        "EMPLOYEE_ID": "DX998050022",
+                        "EMPLOYEE_NAME": "Marimin",
+                        "INCENTIVE_MR_TYPE": "NA",
+                        "IS_DUMMY": 0,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 0,
+                        "LINE_BASED_CODE": "ALL",
+                        "LINE_BASED_ID": 42,
+                        "LINE_CODE": "HO",
+                        "LINE_ID": 23,
+                        "MANAGEMENT_MR_TYPE": "NA",
+                        "PERIODE_END": "2024-04-30",
+                        "PERIODE_START": "2024-04-01",
+                        "POSITION_CODE": "DIR",
+                        "POSITION_ID": 120,
+                        "RAYON_CODE": "DXMDIRSLS",
+                        "RAYON_CODE_REPORT_TO": "DIRCOM01",
+                        "RAYON_GROUP_CODE": "DXMDIRSLS",
+                        "RAYON_GROUP_ID": 30812,
+                        "RAYON_ID": 30812,
+                        "RAYON_ID_REPORT_TO": 3021,
+                        "TERRITORY": ""
+                      },
+                      {
+                        "AREA_BASED_CODE": "HO",
+                        "AREA_BASED_ID": 59,
+                        "AREA_CODE": "HO",
+                        "AREA_ID": 10,
+                        "COMPANY_CODE": "AAM",
+                        "COMPANY_ID": 5,
+                        "EMPLOYEE_ID": null,
+                        "EMPLOYEE_NAME": null,
+                        "END_DATE_EMPLOYEE": "4001-01-01 00:00:00",
+                        "END_DATE_RAYON": "4712-12-31 00:00:00.000",
+                        "INCENTIVE_MR_TYPE": "NA",
+                        "IS_DUMMY": 0,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 0,
+                        "LAST_SYNC": "2023-12-27 02:03:27",
+                        "LINE_BASED_CODE": null,
+                        "LINE_BASED_ID": null,
+                        "LINE_CODE": "ONCOLOGY",
+                        "LINE_ID": 15,
+                        "MANAGEMENT_MR_TYPE": "NA",
+                        "PERIODE_END": "2024-04-30",
+                        "PERIODE_START": "2024-04-01",
+                        "POSITION_CODE": "BM",
+                        "POSITION_ID": 105,
+                        "RAYON_CODE": "",
+                        "RAYON_CODE_REPORT_TO": null,
+                        "RAYON_GROUP_CODE": null,
+                        "RAYON_GROUP_ID": null,
+                        "RAYON_ID": null,
+                        "RAYON_ID_REPORT_TO": null,
+                        "START_DATE_EMPLOYEE": "2020-06-01 00:00:00",
+                        "START_DATE_RAYON": "2016-03-01 00:00:00.000",
+                        "TERRITORY": ""
+                      },
+                      {
+                        "AREA_BASED_CODE": "HO",
+                        "AREA_BASED_ID": 59,
+                        "AREA_CODE": "HO",
+                        "AREA_ID": 10,
+                        "COMPANY_CODE": "AAM",
+                        "COMPANY_ID": 5,
+                        "EMPLOYEE_ID": null,
+                        "EMPLOYEE_NAME": null,
+                        "END_DATE_EMPLOYEE": "4001-12-31 00:00:00",
+                        "END_DATE_RAYON": "4001-12-31 00:00:00",
+                        "INCENTIVE_MR_TYPE": "4",
+                        "IS_DUMMY": 0,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 0,
+                        "LAST_SYNC": null,
+                        "LINE_BASED_CODE": null,
+                        "LINE_BASED_ID": null,
+                        "LINE_CODE": null,
+                        "LINE_ID": null,
+                        "MANAGEMENT_MR_TYPE": "4",
+                        "PERIODE_END": "2024-05-31",
+                        "PERIODE_START": "2021-01-01",
+                        "POSITION_CODE": null,
+                        "POSITION_ID": null,
+                        "RAYON_CODE": null,
+                        "RAYON_CODE_REPORT_TO": null,
+                        "RAYON_GROUP_CODE": null,
+                        "RAYON_GROUP_ID": null,
+                        "RAYON_ID": null,
+                        "RAYON_ID_REPORT_TO": null,
+                        "START_DATE_EMPLOYEE": "2006-01-01 00:00:00",
+                        "START_DATE_RAYON": "2007-01-01 00:00:00",
+                        "TERRITORY": ""
+                      },
+                      {
+                        "AREA_BASED_CODE": "HO",
+                        "AREA_BASED_ID": 59,
+                        "AREA_CODE": "HO",
+                        "AREA_ID": 10,
+                        "COMPANY_CODE": "AAM",
+                        "COMPANY_ID": 5,
+                        "EMPLOYEE_ID": "AAMFSM00003",
+                        "EMPLOYEE_NAME": "Nathaniel Adiputra",
+                        "END_DATE_EMPLOYEE": "4001-12-31 00:00:00",
+                        "END_DATE_RAYON": "4001-12-31 00:00:00",
+                        "INCENTIVE_MR_TYPE": "4",
+                        "IS_DUMMY": 0,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 0,
+                        "LAST_SYNC": null,
+                        "LINE_BASED_CODE": "MS",
+                        "LINE_BASED_ID": 29,
+                        "LINE_CODE": "ALL",
+                        "LINE_ID": 28,
+                        "MANAGEMENT_MR_TYPE": "4",
+                        "PERIODE_END": "2024-05-31",
+                        "PERIODE_START": "2021-01-01",
+                        "POSITION_CODE": "AAM-FSM",
+                        "POSITION_ID": 117,
+                        "RAYON_CODE": "FSMAAM01",
+                        "RAYON_CODE_REPORT_TO": null,
+                        "RAYON_GROUP_CODE": "FSMAAM01",
+                        "RAYON_GROUP_ID": 2125,
+                        "RAYON_ID": 2125,
+                        "RAYON_ID_REPORT_TO": null,
+                        "START_DATE_EMPLOYEE": "2006-01-01 00:00:00",
+                        "START_DATE_RAYON": "2007-01-01 00:00:00",
+                        "TERRITORY": ""
+                      }
+                    ]
+                  }
+                }
+              },
+              "examples": {
+                "Get Movie by ID": {
+                  "value": {
+                    "AREA_CODE": "BDG",
+                    "AREA_ID": 2,
+                    "COMPANY_CODE": "DXM",
+                    "COMPANY_ID": 1,
+                    "EMPLOYEE_NAME": "edwin.dharmawan@dexagroup.com",
+                    "INSERTED_BY": "edwin.dharmawan@dexagroup.com",
+                    "LINES": [
+                      {
+                        "LINE_CODE": "VICTORY",
+                        "LINE_ID": 1
+                      },
+                      {
+                        "LINE_CODE": "HARMONY",
+                        "LINE_ID": 2
+                      }
+                    ],
+                    "PDPO_DISCOUNT_TYPE_CODE": "AP",
+                    "PDPO_DISCOUNT_TYPE_ID": 2,
+                    "POSITION_CODE": "CSO",
+                    "RAYON_CODE": "AAMSDRCSO01",
+                    "REF_DOCNO": "PD/PO-DXM/BDG/202403/NG/0010",
+                    "REF_ID": 296,
+                    "STRUCTURE_LIST": [
+                      {
+                        "AREA_BASED_CODE": "SIDOARJO",
+                        "AREA_BASED_ID": 407,
+                        "AREA_CODE": "SDR",
+                        "AREA_ID": 53,
+                        "COMPANY_CODE": "AAM",
+                        "COMPANY_ID": 5,
+                        "EMPLOYEE_ID": "DXM1203V007",
+                        "EMPLOYEE_NAME": "VACANT-CSO-3941",
+                        "END_DATE_EMPLOYEE": "4001-01-01 00:00:00",
+                        "END_DATE_RAYON": "4001-01-01 00:00:00",
+                        "INCENTIVE_MR_TYPE": "0",
+                        "IS_DUMMY": 0,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 0,
+                        "LAST_SYNC": "2023-02-02 16:13:37",
+                        "LINE_BASED_CODE": "ALL",
+                        "LINE_BASED_ID": 42,
+                        "LINE_CODE": "ALL",
+                        "LINE_ID": 28,
+                        "MANAGEMENT_MR_TYPE": "0",
+                        "PERIODE_END": "2024-04-30",
+                        "PERIODE_START": "2024-04-01",
+                        "POSITION_CODE": "CSO",
+                        "POSITION_ID": 110,
+                        "RAYON_CODE": "AAMSDRCSO01",
+                        "RAYON_CODE_REPORT_TO": null,
+                        "RAYON_GROUP_CODE": "AAMSDRCSO01",
+                        "RAYON_GROUP_ID": 21073,
+                        "RAYON_ID": 21073,
+                        "RAYON_ID_REPORT_TO": null,
+                        "START_DATE_EMPLOYEE": "2012-04-01 00:00:00",
+                        "START_DATE_RAYON": "2012-04-01 00:00:00",
+                        "TERRITORY": ""
+                      },
+                      {
+                        "AREA_BASED_CODE": "HO",
+                        "AREA_BASED_ID": 59,
+                        "AREA_CODE": "HO",
+                        "AREA_ID": 10,
+                        "COMPANY_CODE": "DXM",
+                        "COMPANY_ID": 1,
+                        "EMPLOYEE_ID": "DX012090822",
+                        "EMPLOYEE_NAME": "Budi Lesmono",
+                        "INCENTIVE_MR_TYPE": "HOSPITAL",
+                        "IS_DUMMY": 0,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 0,
+                        "LINE_BASED_CODE": "FBIJUVN",
+                        "LINE_BASED_ID": 177,
+                        "LINE_CODE": "VICTORY",
+                        "LINE_ID": 1,
+                        "MANAGEMENT_MR_TYPE": "HOSPITAL",
+                        "PERIODE_END": "2024-04-30",
+                        "PERIODE_START": "2024-04-01",
+                        "POSITION_CODE": "SM",
+                        "POSITION_ID": 15,
+                        "RAYON_CODE": "SMVIC03",
+                        "RAYON_CODE_REPORT_TO": "NSMVIC01",
+                        "RAYON_GROUP_CODE": "SMVIC03",
+                        "RAYON_GROUP_ID": 3011,
+                        "RAYON_ID": 3011,
+                        "RAYON_ID_REPORT_TO": 3018,
+                        "TERRITORY": ""
+                      },
+                      {
+                        "AREA_BASED_CODE": "HO",
+                        "AREA_BASED_ID": 59,
+                        "AREA_CODE": "HO",
+                        "AREA_ID": 10,
+                        "COMPANY_CODE": "DXM",
+                        "COMPANY_ID": 1,
+                        "EMPLOYEE_ID": "DX996100050",
+                        "EMPLOYEE_NAME": "Suharmin",
+                        "INCENTIVE_MR_TYPE": "HOSPITAL",
+                        "IS_DUMMY": 0,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 0,
+                        "LINE_BASED_CODE": "FBIJUVN",
+                        "LINE_BASED_ID": 177,
+                        "LINE_CODE": "VICTORY",
+                        "LINE_ID": 1,
+                        "MANAGEMENT_MR_TYPE": "HOSPITAL",
+                        "PERIODE_END": "2024-04-30",
+                        "PERIODE_START": "2024-04-01",
+                        "POSITION_CODE": "NSM",
+                        "POSITION_ID": 10,
+                        "RAYON_CODE": "NSMVIC01",
+                        "RAYON_CODE_REPORT_TO": "HMSVIC01",
+                        "RAYON_GROUP_CODE": "NSMVIC01",
+                        "RAYON_GROUP_ID": 3018,
+                        "RAYON_ID": 3018,
+                        "RAYON_ID_REPORT_TO": 3016,
+                        "TERRITORY": ""
+                      },
+                      {
+                        "AREA_BASED_CODE": "HO",
+                        "AREA_BASED_ID": 59,
+                        "AREA_CODE": "HO",
+                        "AREA_ID": 10,
+                        "COMPANY_CODE": "DXM",
+                        "COMPANY_ID": 1,
+                        "EMPLOYEE_ID": "DX000010044",
+                        "EMPLOYEE_NAME": "SURYA WIBOWO",
+                        "INCENTIVE_MR_TYPE": "HOSPITAL",
+                        "IS_DUMMY": 0,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 0,
+                        "LINE_BASED_CODE": "FBIJUVN",
+                        "LINE_BASED_ID": 177,
+                        "LINE_CODE": "VICTORY",
+                        "LINE_ID": 1,
+                        "MANAGEMENT_MR_TYPE": "HOSPITAL",
+                        "PERIODE_END": "2024-04-30",
+                        "PERIODE_START": "2024-04-01",
+                        "POSITION_CODE": "HMS",
+                        "POSITION_ID": 6,
+                        "RAYON_CODE": "HMSVIC01",
+                        "RAYON_CODE_REPORT_TO": "DXMDIRSLS",
+                        "RAYON_GROUP_CODE": "HMSVIC01",
+                        "RAYON_GROUP_ID": 3016,
+                        "RAYON_ID": 3016,
+                        "RAYON_ID_REPORT_TO": 30812,
+                        "TERRITORY": ""
+                      },
+                      {
+                        "AREA_BASED_CODE": "HO",
+                        "AREA_BASED_ID": 59,
+                        "AREA_CODE": "HO",
+                        "AREA_ID": 10,
+                        "COMPANY_CODE": "DXM",
+                        "COMPANY_ID": 1,
+                        "EMPLOYEE_ID": "DX998050022",
+                        "EMPLOYEE_NAME": "Marimin",
+                        "INCENTIVE_MR_TYPE": "NA",
+                        "IS_DUMMY": 0,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 0,
+                        "LINE_BASED_CODE": "ALL",
+                        "LINE_BASED_ID": 42,
+                        "LINE_CODE": "HO",
+                        "LINE_ID": 23,
+                        "MANAGEMENT_MR_TYPE": "NA",
+                        "PERIODE_END": "2024-04-30",
+                        "PERIODE_START": "2024-04-01",
+                        "POSITION_CODE": "DIR",
+                        "POSITION_ID": 120,
+                        "RAYON_CODE": "DXMDIRSLS",
+                        "RAYON_CODE_REPORT_TO": "DIRCOM01",
+                        "RAYON_GROUP_CODE": "DXMDIRSLS",
+                        "RAYON_GROUP_ID": 30812,
+                        "RAYON_ID": 30812,
+                        "RAYON_ID_REPORT_TO": 3021,
+                        "TERRITORY": ""
+                      },
+                      {
+                        "AREA_BASED_CODE": "HO",
+                        "AREA_BASED_ID": 59,
+                        "AREA_CODE": "HO",
+                        "AREA_ID": 10,
+                        "COMPANY_CODE": "FPP",
+                        "COMPANY_ID": 2,
+                        "EMPLOYEE_ID": "FP018090255",
+                        "EMPLOYEE_NAME": "Herry Sutana",
+                        "END_DATE_EMPLOYEE": "4001-01-01 00:00:00",
+                        "END_DATE_RAYON": "4012-01-01 00:00:00.000",
+                        "INCENTIVE_MR_TYPE": "HOSPITAL",
+                        "IS_DUMMY": null,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 0,
+                        "LAST_SYNC": "2023-12-27 02:03:12",
+                        "LINE_BASED_CODE": "MS",
+                        "LINE_BASED_ID": 29,
+                        "LINE_CODE": "MS",
+                        "LINE_ID": 9,
+                        "MANAGEMENT_MR_TYPE": "HOSPITAL",
+                        "PERIODE_END": "2024-04-30",
+                        "PERIODE_START": "2024-04-01",
+                        "POSITION_CODE": "MGRMS",
+                        "POSITION_ID": 53,
+                        "RAYON_CODE": "FPPMGRMS01",
+                        "RAYON_CODE_REPORT_TO": "FPPHMSOPT01",
+                        "RAYON_GROUP_CODE": "FPPMGRMS01",
+                        "RAYON_GROUP_ID": 21034,
+                        "RAYON_ID": 21034,
+                        "RAYON_ID_REPORT_TO": 29244,
+                        "START_DATE_EMPLOYEE": "2018-10-01 00:00:00",
+                        "START_DATE_RAYON": "2011-01-01 00:00:00.000",
+                        "TERRITORY": ""
+                      },
+                      {
+                        "AREA_BASED_CODE": "HO",
+                        "AREA_BASED_ID": 59,
+                        "AREA_CODE": "HO",
+                        "AREA_ID": 10,
+                        "COMPANY_CODE": "DXM",
+                        "COMPANY_ID": 1,
+                        "EMPLOYEE_ID": "DX009100652",
+                        "EMPLOYEE_NAME": "Ignatius Edward Budijono",
+                        "INCENTIVE_MR_TYPE": "HOSPITAL",
+                        "IS_DUMMY": null,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 0,
+                        "LINE_BASED_CODE": "HP",
+                        "LINE_BASED_ID": 17,
+                        "LINE_CODE": "HARMONY",
+                        "LINE_ID": 2,
+                        "MANAGEMENT_MR_TYPE": "HOSPITAL",
+                        "PERIODE_END": "2024-04-30",
+                        "PERIODE_START": "2024-04-01",
+                        "POSITION_CODE": "SM",
+                        "POSITION_ID": 15,
+                        "RAYON_CODE": "SMHAY05",
+                        "RAYON_CODE_REPORT_TO": "NSMHAY01",
+                        "RAYON_GROUP_CODE": "SMHAY05",
+                        "RAYON_GROUP_ID": 3008,
+                        "RAYON_ID": 3008,
+                        "RAYON_ID_REPORT_TO": 3019,
+                        "TERRITORY": ""
+                      },
+                      {
+                        "AREA_BASED_CODE": "HO",
+                        "AREA_BASED_ID": 59,
+                        "AREA_CODE": "HO",
+                        "AREA_ID": 10,
+                        "COMPANY_CODE": "DXM",
+                        "COMPANY_ID": 1,
+                        "EMPLOYEE_ID": "DX005110630",
+                        "EMPLOYEE_NAME": "Efendy",
+                        "INCENTIVE_MR_TYPE": "HOSPITAL",
+                        "IS_DUMMY": null,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 0,
+                        "LINE_BASED_CODE": "HP",
+                        "LINE_BASED_ID": 17,
+                        "LINE_CODE": "HARMONY",
+                        "LINE_ID": 2,
+                        "MANAGEMENT_MR_TYPE": "HOSPITAL",
+                        "PERIODE_END": "2024-04-30",
+                        "PERIODE_START": "2024-04-01",
+                        "POSITION_CODE": "NSM",
+                        "POSITION_ID": 10,
+                        "RAYON_CODE": "NSMHAY01",
+                        "RAYON_CODE_REPORT_TO": "HMSHAY01",
+                        "RAYON_GROUP_CODE": "NSMHAY01",
+                        "RAYON_GROUP_ID": 3019,
+                        "RAYON_ID": 3019,
+                        "RAYON_ID_REPORT_TO": 3017,
+                        "TERRITORY": ""
+                      },
+                      {
+                        "AREA_BASED_CODE": "HO",
+                        "AREA_BASED_ID": 59,
+                        "AREA_CODE": "HO",
+                        "AREA_ID": 10,
+                        "COMPANY_CODE": "DXM",
+                        "COMPANY_ID": 1,
+                        "EMPLOYEE_ID": "DXM1808V006",
+                        "EMPLOYEE_NAME": "VACANT-HMS01-1955",
+                        "INCENTIVE_MR_TYPE": "HOSPITAL",
+                        "IS_DUMMY": null,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 1,
+                        "LINE_BASED_CODE": "HP",
+                        "LINE_BASED_ID": 17,
+                        "LINE_CODE": "HARMONY",
+                        "LINE_ID": 2,
+                        "MANAGEMENT_MR_TYPE": "HOSPITAL",
+                        "PERIODE_END": "2024-04-30",
+                        "PERIODE_START": "2024-04-01",
+                        "POSITION_CODE": "HMS",
+                        "POSITION_ID": 6,
+                        "RAYON_CODE": "HMSHAY01",
+                        "RAYON_CODE_REPORT_TO": "DXMDIRSLS",
+                        "RAYON_GROUP_CODE": "HMSHAY01",
+                        "RAYON_GROUP_ID": 3017,
+                        "RAYON_ID": 3017,
+                        "RAYON_ID_REPORT_TO": 30812,
+                        "TERRITORY": ""
+                      },
+                      {
+                        "AREA_BASED_CODE": "HO",
+                        "AREA_BASED_ID": 59,
+                        "AREA_CODE": "HO",
+                        "AREA_ID": 10,
+                        "COMPANY_CODE": "DXM",
+                        "COMPANY_ID": 1,
+                        "EMPLOYEE_ID": "DX998050022",
+                        "EMPLOYEE_NAME": "Marimin",
+                        "INCENTIVE_MR_TYPE": "NA",
+                        "IS_DUMMY": 0,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 0,
+                        "LINE_BASED_CODE": "ALL",
+                        "LINE_BASED_ID": 42,
+                        "LINE_CODE": "HO",
+                        "LINE_ID": 23,
+                        "MANAGEMENT_MR_TYPE": "NA",
+                        "PERIODE_END": "2024-04-30",
+                        "PERIODE_START": "2024-04-01",
+                        "POSITION_CODE": "DIR",
+                        "POSITION_ID": 120,
+                        "RAYON_CODE": "DXMDIRSLS",
+                        "RAYON_CODE_REPORT_TO": "DIRCOM01",
+                        "RAYON_GROUP_CODE": "DXMDIRSLS",
+                        "RAYON_GROUP_ID": 30812,
+                        "RAYON_ID": 30812,
+                        "RAYON_ID_REPORT_TO": 3021,
+                        "TERRITORY": ""
+                      },
+                      {
+                        "AREA_BASED_CODE": "HO",
+                        "AREA_BASED_ID": 59,
+                        "AREA_CODE": "HO",
+                        "AREA_ID": 10,
+                        "COMPANY_CODE": "AAM",
+                        "COMPANY_ID": 5,
+                        "EMPLOYEE_ID": null,
+                        "EMPLOYEE_NAME": null,
+                        "END_DATE_EMPLOYEE": "4001-01-01 00:00:00",
+                        "END_DATE_RAYON": "4712-12-31 00:00:00.000",
+                        "INCENTIVE_MR_TYPE": "NA",
+                        "IS_DUMMY": 0,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 0,
+                        "LAST_SYNC": "2023-12-27 02:03:27",
+                        "LINE_BASED_CODE": null,
+                        "LINE_BASED_ID": null,
+                        "LINE_CODE": "ONCOLOGY",
+                        "LINE_ID": 15,
+                        "MANAGEMENT_MR_TYPE": "NA",
+                        "PERIODE_END": "2024-04-30",
+                        "PERIODE_START": "2024-04-01",
+                        "POSITION_CODE": "BM",
+                        "POSITION_ID": 105,
+                        "RAYON_CODE": "",
+                        "RAYON_CODE_REPORT_TO": null,
+                        "RAYON_GROUP_CODE": null,
+                        "RAYON_GROUP_ID": null,
+                        "RAYON_ID": null,
+                        "RAYON_ID_REPORT_TO": null,
+                        "START_DATE_EMPLOYEE": "2020-06-01 00:00:00",
+                        "START_DATE_RAYON": "2016-03-01 00:00:00.000",
+                        "TERRITORY": ""
+                      },
+                      {
+                        "AREA_BASED_CODE": "HO",
+                        "AREA_BASED_ID": 59,
+                        "AREA_CODE": "HO",
+                        "AREA_ID": 10,
+                        "COMPANY_CODE": "AAM",
+                        "COMPANY_ID": 5,
+                        "EMPLOYEE_ID": null,
+                        "EMPLOYEE_NAME": null,
+                        "END_DATE_EMPLOYEE": "4001-12-31 00:00:00",
+                        "END_DATE_RAYON": "4001-12-31 00:00:00",
+                        "INCENTIVE_MR_TYPE": "4",
+                        "IS_DUMMY": 0,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 0,
+                        "LAST_SYNC": null,
+                        "LINE_BASED_CODE": null,
+                        "LINE_BASED_ID": null,
+                        "LINE_CODE": null,
+                        "LINE_ID": null,
+                        "MANAGEMENT_MR_TYPE": "4",
+                        "PERIODE_END": "2024-05-31",
+                        "PERIODE_START": "2021-01-01",
+                        "POSITION_CODE": null,
+                        "POSITION_ID": null,
+                        "RAYON_CODE": null,
+                        "RAYON_CODE_REPORT_TO": null,
+                        "RAYON_GROUP_CODE": null,
+                        "RAYON_GROUP_ID": null,
+                        "RAYON_ID": null,
+                        "RAYON_ID_REPORT_TO": null,
+                        "START_DATE_EMPLOYEE": "2006-01-01 00:00:00",
+                        "START_DATE_RAYON": "2007-01-01 00:00:00",
+                        "TERRITORY": ""
+                      },
+                      {
+                        "AREA_BASED_CODE": "HO",
+                        "AREA_BASED_ID": 59,
+                        "AREA_CODE": "HO",
+                        "AREA_ID": 10,
+                        "COMPANY_CODE": "AAM",
+                        "COMPANY_ID": 5,
+                        "EMPLOYEE_ID": "AAMFSM00003",
+                        "EMPLOYEE_NAME": "Nathaniel Adiputra",
+                        "END_DATE_EMPLOYEE": "4001-12-31 00:00:00",
+                        "END_DATE_RAYON": "4001-12-31 00:00:00",
+                        "INCENTIVE_MR_TYPE": "4",
+                        "IS_DUMMY": 0,
+                        "IS_STATION": 0,
+                        "IS_VACANT": 0,
+                        "LAST_SYNC": null,
+                        "LINE_BASED_CODE": "MS",
+                        "LINE_BASED_ID": 29,
+                        "LINE_CODE": "ALL",
+                        "LINE_ID": 28,
+                        "MANAGEMENT_MR_TYPE": "4",
+                        "PERIODE_END": "2024-05-31",
+                        "PERIODE_START": "2021-01-01",
+                        "POSITION_CODE": "AAM-FSM",
+                        "POSITION_ID": 117,
+                        "RAYON_CODE": "FSMAAM01",
+                        "RAYON_CODE_REPORT_TO": null,
+                        "RAYON_GROUP_CODE": "FSMAAM01",
+                        "RAYON_GROUP_ID": 2125,
+                        "RAYON_ID": 2125,
+                        "RAYON_ID_REPORT_TO": null,
+                        "START_DATE_EMPLOYEE": "2006-01-01 00:00:00",
+                        "START_DATE_RAYON": "2007-01-01 00:00:00",
+                        "TERRITORY": ""
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "text/plain": {
+              "examples": {
+                "Get Movie by ID": {
+                  "value": ""
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200 OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number",
+                      "example": 200
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "actors": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "example": "Actor1"
+                          },
+                          "example": [
+                            "Actor1",
+                            "Actor2"
+                          ]
+                        },
+                        "director": {
+                          "type": "string",
+                          "example": "James Cameroon"
+                        },
+                        "duration": {
+                          "type": "number",
+                          "example": 130
+                        },
+                        "genre": {
+                          "type": "string",
+                          "example": "Fantasy"
+                        },
+                        "overview": {
+                          "type": "string",
+                          "example": "In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission"
+                        },
+                        "rating": {
+                          "type": "string",
+                          "example": "PG"
+                        },
+                        "release_date": {
+                          "type": "string",
+                          "example": "2024-03-25T17:00:00.000Z"
+                        },
+                        "title": {
+                          "type": "string",
+                          "example": "Dune"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "OK"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                },
+                "examples": {
+                  "200 OK": {
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "actors": [
+                          "Actor1",
+                          "Actor2"
+                        ],
+                        "director": "James Cameroon",
+                        "duration": 130,
+                        "genre": "Fantasy",
+                        "overview": "In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission",
+                        "rating": "PG",
+                        "release_date": "2024-03-25T17:00:00.000Z",
+                        "title": "Dune"
+                      },
+                      "message": "OK",
+                      "success": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Movies"
+        ],
+        "summary": "Edit Movie By ID",
+        "description": "Edit Movie By ID",
+        "operationId": "editMovieById",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "director": {
+                    "type": "string",
+                    "example": "Kari Pollard"
+                  },
+                  "duration": {
+                    "type": "number",
+                    "example": 106
+                  },
+                  "genre": {
+                    "type": "string",
+                    "example": "rest"
+                  },
+                  "overview": {
+                    "type": "string",
+                    "example": "Difference of describe time peace goal. Those concern pretty force most which bring.\nBlue leg allow company series. Season bank individual guy west per local. Heart trade produce economy."
+                  },
+                  "rating": {
+                    "type": "string",
+                    "example": "PG"
+                  },
+                  "release_date": {
+                    "type": "string",
+                    "example": "2022-10-26"
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "Adaptive coherent supportyyyy"
+                  }
+                }
+              },
+              "examples": {
+                "Edit Movie By ID": {
+                  "value": {
+                    "director": "Kari Pollard",
+                    "duration": 106,
+                    "genre": "rest",
+                    "overview": "Difference of describe time peace goal. Those concern pretty force most which bring.\nBlue leg allow company series. Season bank individual guy west per local. Heart trade produce economy.",
+                    "rating": "PG",
+                    "release_date": "2022-10-26",
+                    "title": "Adaptive coherent supportyyyy"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "401 Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number",
+                      "example": 401
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    }
+                  }
+                },
+                "examples": {
+                  "401 Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "success": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Movies"
+        ],
+        "summary": "Delete Movie by ID",
+        "description": "Delete Movie by ID",
+        "operationId": "deleteMovieById",
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "example": ""
+          }
+        }
+      ]
+    },
+    "/movie/add": {
+      "post": {
+        "tags": [
+          "Movies"
+        ],
+        "summary": "Add New Movie",
+        "description": "Add New Movie",
+        "operationId": "addNewMovie",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "director": {
+                    "type": "string",
+                    "example": "Kari Pollard"
+                  },
+                  "duration": {
+                    "type": "number",
+                    "example": 106
+                  },
+                  "genre": {
+                    "type": "string",
+                    "example": "rest"
+                  },
+                  "overview": {
+                    "type": "string",
+                    "example": "Difference of describe time peace goal. Those concern pretty force most which bring.\nBlue leg allow company series. Season bank individual guy west per local. Heart trade produce economy."
+                  },
+                  "rating": {
+                    "type": "string",
+                    "example": "PG"
+                  },
+                  "release_date": {
+                    "type": "string",
+                    "example": "2022-10-26"
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "Adaptive coherent support"
+                  }
+                }
+              },
+              "examples": {
+                "Add New Movie": {
+                  "value": {
+                    "director": "Kari Pollard",
+                    "duration": 106,
+                    "genre": "rest",
+                    "overview": "Difference of describe time peace goal. Those concern pretty force most which bring.\nBlue leg allow company series. Season bank individual guy west per local. Heart trade produce economy.",
+                    "rating": "PG",
+                    "release_date": "2022-10-26",
+                    "title": "Adaptive coherent support"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "201 Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number",
+                      "example": 201
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number",
+                          "example": 48
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Created"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                },
+                "examples": {
+                  "201 Created": {
+                    "value": {
+                      "code": 201,
+                      "data": {
+                        "id": 48
+                      },
+                      "message": "Created",
+                      "success": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/movie/now-playing": {
+      "get": {
+        "tags": [
+          "Movies"
+        ],
+        "summary": "Get Now Playing",
+        "description": "Get Now Playing",
+        "operationId": "getNowPlaying",
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/movie-showtime/add": {
+      "post": {
+        "tags": [
+          "Movies"
+        ],
+        "summary": "Add Showtime",
+        "description": "Add Showtime",
+        "operationId": "addShowtime",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "movie_id": {
+                    "type": "number",
+                    "example": 49
+                  },
+                  "price": {
+                    "type": "number",
+                    "example": 20
+                  },
+                  "show_time": {
+                    "type": "string",
+                    "example": "2024-05-01 10:00:00"
+                  }
+                }
+              },
+              "examples": {
+                "Add Showtime": {
+                  "value": {
+                    "movie_id": 49,
+                    "price": 20,
+                    "show_time": "2024-05-01 10:00:00"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/movie-showtime/{id}": {
+      "put": {
+        "tags": [
+          "Movies"
+        ],
+        "summary": "Edit Showtime",
+        "description": "Edit Showtime",
+        "operationId": "editShowtime",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "example": "now_showing"
+                  }
+                }
+              },
+              "examples": {
+                "Edit Showtime": {
+                  "value": {
+                    "status": "now_showing"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "example": ""
+          }
+        }
+      ]
+    },
+    "/booking/add": {
+      "post": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Booking Ticket",
+        "description": "Booking Ticket",
+        "operationId": "bookingTicket",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "showtime_seat_id": {
+                    "type": "number",
+                    "example": 20
+                  }
+                }
+              },
+              "examples": {
+                "Booking Ticket": {
+                  "value": {
+                    "showtime_seat_id": 20
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/booking/history": {
+      "get": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Get Booking History",
+        "description": "Get Booking History",
+        "operationId": "getBookingHistory",
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/booking/paid/dIlfmGUdv": {
+      "put": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Update Booking Status",
+        "description": "Update Booking Status",
+        "operationId": "updateBookingStatus",
+        "responses": {
+          "200": {
+            "description": ""
           }
         }
       }
     }
   },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
   "tags": [
     {
       "name": "Auth",
-      "description": "This is for auth"
+      "description": "This is for authentication purpose"
     },
     {
-      "name": "Movies"
+      "name": "Movies",
+      "description": "This is for movies like add, edit, delete, etc. Other than that, it also includes showtime"
+    },
+    {
+      "name": "Booking",
+      "description": "This is for booking purpose like booking ticket, get booking history, etc."
     }
   ]
 }

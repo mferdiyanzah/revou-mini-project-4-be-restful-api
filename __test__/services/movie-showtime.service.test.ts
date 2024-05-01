@@ -29,6 +29,7 @@ describe("Movie Show Time Service", () => {
         status: "upcoming" as const,
       };
 
+      (movieShowTimeRepository.checkTimeAvailability as jest.Mock).mockResolvedValue(true);
       (movieShowTimeRepository.addShowTime as jest.Mock).mockResolvedValue("1");
       (seatRepository.getAllSeats as jest.Mock).mockResolvedValue([
         { id: "1" },
@@ -38,7 +39,7 @@ describe("Movie Show Time Service", () => {
 
       const result = await movieShowTimeService.addShowTime(request);
 
-      expect(result).toBe(true);
+      expect(result).toBe("1");
       expect(mockConnection.beginTransaction).toHaveBeenCalledTimes(1);
     });
 
@@ -67,6 +68,8 @@ describe("Movie Show Time Service", () => {
   describe("Delete Show Time", () => {
     it("should return number if success", async () => {
       const showTimeId = "1";
+
+      (movieShowTimeRepository.getShowTimeById as jest.Mock).mockResolvedValue({} as any);
       (movieShowTimeRepository.deleteShowTime as jest.Mock).mockResolvedValue(1);
 
       const result = await movieShowTimeService.deleteShowTime(showTimeId);
@@ -84,6 +87,7 @@ describe("Movie Show Time Service", () => {
         show_time: "2021-01-01 12:00:00",
         status: "upcoming" as const,
       };
+      (movieShowTimeRepository.getShowTimeById as jest.Mock).mockResolvedValue({} as any);
       (movieShowTimeRepository.updateShowTime as jest.Mock).mockResolvedValue(1);
 
       const result = await movieShowTimeService.updateShowTime(request);

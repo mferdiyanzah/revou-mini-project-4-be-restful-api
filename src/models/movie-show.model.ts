@@ -7,7 +7,7 @@ interface MovieShowRequest {
   movie_id: number;
   price: number;
   show_time: string;
-  status: 'upcoming' | 'now_showing' | 'past';
+  status: 'upcoming' | 'now_showing' | 'finished';
 }
 
 interface UpdateMovieShowRequest extends MovieShowRequest {

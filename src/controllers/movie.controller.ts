@@ -34,7 +34,7 @@ const getMovies = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const request: GenericPaginationRequest = {
+    const getMovieRequest: GenericPaginationRequest = {
       search,
       limit: limitNumber,
       offset: pageNumber,
@@ -42,7 +42,7 @@ const getMovies = async (req: Request, res: Response): Promise<void> => {
       sort,
     };
 
-    const movies = await movieService.getMovies(request);
+    const movies = await movieService.getMovies(getMovieRequest);
 
     responseHandler(res, 200, "OK", true, movies);
   } catch (er) {
@@ -68,15 +68,15 @@ const getMovieById = async (req: Request, res: Response): Promise<void> => {
 
 const addNewMovie = async (req: Request, res: Response): Promise<void> => {
   try {
-    const movie: AddMovieRequest = req.body;
+    const addMovieRequest: AddMovieRequest = req.body;
     const requiredKeys = ["title", "release_date", "director", "genre", "duration", "rating", "overview", "actors"];
-    const isRequestValid = validateRequest(requiredKeys, movie);
+    const isRequestValid = validateRequest(requiredKeys, addMovieRequest);
 
     if (!isRequestValid) {
       throw new Error("All fields are required");
     }
 
-    const movieId = await movieService.addNewMovie(movie);
+    const movieId = await movieService.addNewMovie(addMovieRequest);
 
     responseHandler(res, 201, "Created", true, { id: movieId });
   } catch (er) {

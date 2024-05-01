@@ -1,336 +1,111 @@
-#### CinePrime
+# CinePrime :movie_camera:
+
+---
 
 CinePrime is a web application that allows users to search for movies and TV shows, view details about them, and save them to their watchlist. Users can also view their watchlist and remove items from it. The application uses the OMDb API to search for movies and TV shows.
 
-### Scenario
+### How to run the application :runner:
 
-- CinePrime only has a theater in one location.
-- A theater only has one screen.
-- Users can register and log in to the platform.
-- Users can browse a list of available movies.
-- Users can view details about a specific movie.
-- Users can book tickets for a movie screening.
-- Users can view their booking history.
-- Admin users can manage movie listings, including adding, updating, and deleting movies.
-- Admin users can manage showtimes for each movie, including adding, updating, and deleting showtimes.
-- Users receive email notifications for booking confirmation and reminders before the showtime.
-- Users can search for movies and TV shows using the OMDb API.
+---
 
-### MVP
+##### Prerequisites
 
-Use Cases
+- Docker
 
-1. User Registration:
-   a. Use Case: New users should be able to register on the platform.
-   b. Functionality: Users can sign up with their email and password, and their
-   credentials are securely stored in the database. Upon successful
-   registration, users receive a JWT token for authentication.
-2. User Login:
-   a. Use Case: Registered users should be able to log in to the platform.
-   b. Functionality: Users provide their email and password to log in. If the
-   credentials are correct, they receive a JWT token to authenticate
-   subsequent requests.
-3. Browse Movies:
-   a. Authentication : no
-   b. Use Case: Users want to see a list of available movies.
-   c. Functionality: The API provides endpoints to retrieve a list of movies
-   currently showing, including details such as title, genre, duration, and
-   available showtimes.
-4. Movie Details:
-   a. Authentication : no
-   b. Use Case: Users want to view details about a specific movie.
-   c. Functionality: Users can retrieve detailed information about a particular
-   movie, including synopsis, cast, director, and ratings.
-5. Book Tickets:
-   a. Authentication : yes
-   b. Use Case: Users want to book tickets for a movie screening.
-   c. Functionality: Users can select a movie, choose a showtime, and book
-   tickets for the desired number of seats. Upon successful booking, users
-   receive a confirmation along with a booking reference.
-6. View Booking History:
-   a. Authentication : yes
-   b. Use Case: Users want to see their past and upcoming bookings.
-   c. Functionality: Users can view their booking history, including details such
-   as movie title, showtime, number of tickets, and booking status.
-7. Manage Movies (Admin Only):
-   a. Authentication : yes
-   b. Use Case: Admin users need to manage movie listings.
-   c. Functionality: Admin users can add new movies, update existing movie
-   details, delete movies, and manage showtimes.
+If you don't have Docker installed, you can download it from [here](https://www.docker.com/products/docker-desktop).
 
-### Endpoints
+##### Steps
 
-1. POST /api/users/register: Register a new user.
-2. POST /api/users/login: Log in an existing user.
-3. GET /api/movies: Retrieve a list of available movies.
-4. GET /api/movies/:id: Retrieve details about a specific movie.
-5. POST /api/bookings: Book tickets for a movie screening.
-6. GET /api/bookings: Retrieve a user's booking history.
-7. POST /api/movies: Add a new movie (admin only).
-8. PUT /api/movies/:id: Update movie details (admin only).
-9. DELETE /api/movies/:id: Delete a movie (admin only).
-10. POST /api/showtimes: Add a new showtime (admin only).
-11. PUT /api/showtimes/:id: Update showtime details (admin only).
-12. DELETE /api/showtimes/:id: Delete a showtime (admin only).
-13. GET /api/showtimes: Retrieve a list of available showtimes.
+1. Clone the repository.
+2. Run the following command to start the application:
 
-### Detailed Endpoint Description
+```
+docker-compose up
+```
 
-<ol>
-  <li>POST /api/users/register: Register a new user.
-    <ul>
-      <li>Request Body:
-        <ul>
-          <li>email: string (required)</li>
-          <li>password: string (required)</li>
-        </ul>
-      </li>
-      <li>Response:
-        <ul>
-          <li>id: string</li>
-          <li>email: string</li>
-          <li>token: string</li>
-        </ul>
-      </li>
-      <li>Error Use Cases:
-        <ul>
-          <li>400: Invalid request body</li>
-          <li>409: User already exists</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>POST /api/users/login: Log in an existing user.
-    <ul>
-      <li>Request Body:
-        <ul>
-          <li>email: string (required)</li>
-          <li>password: string (required)</li>
-        </ul>
-      </li>
-      <li>Response:
-        <ul>
-          <li>id: string</li>
-          <li>email: string</li>
-          <li>token: string</li>
-        </ul>
-      </li>
-      <li>Error Use Cases:
-        <ul>
-          <li>400: Invalid request body</li>
-          <li>401: Unauthorized</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>GET /api/movies: Retrieve a list of available movies.
-    <ul>
-      <li>Response:
-        <ul>
-          <li>movies: array of objects</li>
-        </ul>
-      </li>
-      <li>Error Use Cases:
-        <ul>
-          <li>401: Unauthorized</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>GET /api/movies/:id: Retrieve details about a specific movie.
-    <ul>
-      <li>Response:
-        <ul>
-          <li>movie: object</li>
-        </ul>
-      </li>
-      <li>Error Use Cases:
-        <ul>
-          <li>401: Unauthorized</li>
-          <li>404: Movie not found</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>POST /api/bookings: Book tickets for a movie screening.
-    <ul>
-      <li>Request Body:
-        <ul>
-          <li>movieId: string (required)</li>
-          <li>showtimeId: string (required)</li>
-          <li>numTickets: number (required)</li>
-        </ul>
-      </li>
-      <li>Response:
-        <ul>
-          <li>booking: object</li>
-        </ul>
-      </li>
-      <li>Error Use Cases:
-        <ul>
-          <li>400: Invalid request body</li>
-          <li>401: Unauthorized</li>
-          <li>404: Movie or showtime not found</li>
-          <li>409: Insufficient tickets available</li>
-        </ul>
-      </li>
-    </ul>
-    <li>GET /api/bookings: Retrieve a user's booking history.
-      <ul>
-        <li>Response:
-          <ul>
-            <li>bookings: array of objects</li>
-          </ul>
-        </li>
-        <li>Error Use Cases:
-          <ul>
-            <li>401: Unauthorized</li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-    <li>POST /api/movies: Add a new movie (admin only).
-      <ul>
-        <li>Request Body:
-          <ul>
-            <li>title: string (required)</li>
-            <li>genre: string (required)</li>
-            <li>duration: number (required)</li>
-          </ul>
-        </li>
-        <li>Response:
-          <ul>
-            <li>movie: object</li>
-          </ul>
-        </li>
-        <li>Error Use Cases:
-          <ul>
-            <li>400: Invalid request body</li>
-            <li>401: Unauthorized</li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-    <li>PUT /api/movies/:id: Update movie details (admin only).
-      <ul>
-        <li>Request Body:
-          <ul>
-            <li>title: string</li>
-            <li>genre: string</li>
-            <li>duration: number</li>
-          </ul>
-        </li>
-        <li>Response:
-          <ul>
-            <li>movie: object</li>
-          </ul>
-        </li>
-        <li>Error Use Cases:
-          <ul>
-            <li>400: Invalid request body</li>
-            <li>401: Unauthorized</li>
-            <li>404: Movie not found</li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-    <li>DELETE /api/movies/:id: Delete a movie (admin only).
-      <ul>
-        <li>Response:
-          <ul>
-            <li>message: string</li>
-          </ul>
-        </li>
-        <li>Error Use Cases:
-          <ul>
-            <li>401: Unauthorized</li>
-            <li>404: Movie not found</li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-    <li>POST /api/showtimes: Add a new showtime (admin only).
-      <ul>
-        <li>Request Body:
-          <ul>
-            <li>movieId: string (required)</li>
-            <li>time: string (required)</li>
-            <li>date: string (required)</li>
-          </ul>
-        </li>
-        <li>Response:
-          <ul>
-            <li>showtime: object</li>
-          </ul>
-        </li>
-        <li>Error Use Cases:
-          <ul>
-            <li>400: Invalid request body</li>
-            <li>401: Unauthorized</li>
-            <li>404: Movie not found</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>PUT /api/showtimes/:id: Update showtime details (admin only).
-    <ul>
-      <li>Request Body:
-        <ul>
-          <li>time: string</li>
-          <li>date: string</li>
-        </ul>
-      </li>
-      <li>Response:
-        <ul>
-          <li>showtime: object</li>
-        </ul>
-      </li>
-      <li>Error Use Cases:
-        <ul>
-          <li>400: Invalid request body</li>
-          <li>401: Unauthorized</li>
-          <li>404: Showtime not found</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>DELETE /api/showtimes/:id: Delete a showtime (admin only).
-    <ul>
-      <li>Response:
-        <ul>
-          <li>message: string</li>
-        </ul>
-      </li>
-      <li>Error Use Cases:
-        <ul>
-          <li>401: Unauthorized</li>
-          <li>404: Showtime not found</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>GET /api/showtimes: Retrieve a list of available showtimes.
-    <ul>
-      <li>Response:
-        <ul>
-          <li>showtimes: array of objects</li>
-        </ul>
-      </li>
-      <li>Error Use Cases:
-        <ul>
-          <li>401: Unauthorized</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  
-</ol>
+3. We already provided some seed data for the application. Thus, you can start using the application right away. Don't forget to create a user first.
+4. You can use swagger to test the API. The swagger documentation is available at `http://localhost:3000/docs`.
+5. Enjoy the application!
 
-### Scheduler Jobs
+### Technologies Used :hammer_and_wrench:
 
-1. Send Booking Confirmation Emails: Send email notifications to users after
-   booking tickets.
-2. Send Booking Reminders: Send email reminders to users before the showtime.
-3. Update Booking Status: Automatically update the booking status based on the
-   showtime.
-4. Delete Expired Bookings: Remove expired bookings from the database.
+---
+
+- Express.js
+- Node.js
+- MySQL
+- Node Schedule
+- JWT
+
+### Scopes and Limitations :mag:
+
+- We only have one theater in our application.
+- We can only book tickets for the current day.
+- We only show one movie at a time.
+
+### Features :sparkles:
+
+- User can search for movies.
+- User can view details about a movie.
+- User can book tickets for a movie.
+- User can view their booking history.
+
+### Entity Relationship Diagram :bar_chart:
+
+---
+
+The following is the ERD for the application:
+
+![ERD](./docs/cineprime.png)
+
+We have several tables in our database:
+
+1. Users: Stores information about users.
+2. Movies: Stores information about movies.
+3. Bookings: Stores information about bookings.
+4. Seats: Stores information about seats.
+5. Casts: Stores information about casts.
+6. MovieCasts: Stores information about the relationship between movies and casts.
+   etc.
+
+### API Endpoints and Scheduler :calling:
+
+---
+
+#### Users :busts_in_silhouette:
+
+- POST /user/register: Register a new user.
+- POST /user/login: Login a user.
+
+#### Movies :clapper:
+
+- GET /movie/all: Get all movies.
+- GET /movie/`:id`: Get a movie by id.
+- POST /movie/add: Add a new movie.
+- PUT /movie/`:id`: Update a movie by id.
+- DELETE /movie/`:id`: Delete a movie by id.
+- GET /movies/now-playing: Get the movie that is currently playing.
+- POST /movie-showtime/add: Add a new showtime for a movie.
+- GET /movie-showtime/`:id`: Get a showtime by id.
+
+#### Bookings :ticket:
+
+- GET /booking/history: Get the booking history of the user.
+- POST /booking/add: Book a ticket for a movie.
+- PUT /booking/paid/`:id`: Update the payment status of a booking by id.
+
+#### Scheduler :alarm_clock:
+
+Not only do we have API endpoints, but we also have a scheduler that runs every 30 seconds to update expired bookings, update showtime that has passed, and update showtime that is currently playing. The scheduler is implemented using the node-schedule package.
+
+### Future Improvements :rocket:
+
+---
+
+1. Notify users about their upcoming bookings.
+2. Allow users to cancel their bookings.
+3. Allow users to rate movies.
+4. Allow users to view the cast of a movie.
+5. Allow users to view the trailer of a movie.
+6. Add more theaters and showtimes.
+7. Allow users to book more than one ticket at a time.

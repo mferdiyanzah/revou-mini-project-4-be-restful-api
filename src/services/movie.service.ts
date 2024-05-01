@@ -17,7 +17,9 @@ const getMovies = async (
 
 const getMovieById = async (id: string): Promise<MovieDetailResponse> => {
   const movies = await movieRepository.getMovieById(id);
-
+  if (movies.length === 0) {
+    throw new Error("Movie not found");
+  }
 
   const movie: MovieDetailResponse = {
     id: movies[0].id,
@@ -57,11 +59,17 @@ const getMoviesNowPlaying = async (): Promise<GetAllMoviesResponse[]> => {
   return movies;
 };
 
-const updateMovieById = async (id: string, movie: UpdateMovieRequest): Promise<void> => {
-  await movieRepository.updateMovieById(id, movie);
+const updateMovieById = async (id: string, updateMovieRequest: UpdateMovieRequest): Promise<void> => {
+  const movie = await movieRepository.getMovieById(id);
+  if (movie === undefined) throw new Error("Movie not found");
+
+  await movieRepository.updateMovieById(id, updateMovieRequest);
 };
 
 const deleteMovieById = async (id: string): Promise<void> => {
+  const movie = await movieRepository.getMovieById(id);
+  if (movie.length === 0) throw new Error("Movie not found");
+
   await movieRepository.deleteMovieById(id);
 };
 

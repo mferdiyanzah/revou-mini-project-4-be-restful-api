@@ -3,8 +3,8 @@ import { type ResultSetHeader, type RowDataPacket } from "mysql2";
 import pool from "../libs/db";
 import { type UserModel, type UserRegisterRequest } from "../models/user.model";
 
-const register = async (user: UserRegisterRequest): Promise<number> => {
-  const { email, password, username, isAdmin } = user;
+const register = async (userRegisterRequest: UserRegisterRequest): Promise<number> => {
+  const { email, password, username, isAdmin } = userRegisterRequest;
   const query = 'INSERT INTO users (email, password, username, is_admin) VALUES (?, ?, ?, ?)';
   const values = [email, password, username, isAdmin];
 
