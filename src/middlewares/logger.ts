@@ -32,7 +32,7 @@ const logger = (req: Request, res: Response, next: NextFunction): void => {
     const currentTime = new Date().toISOString();
 
     console.log(
-      `${currentTime} - ${req.method} ${req.originalUrl} - ${statusCode} - ${timeColor}${time.toFixed(2)}ms`
+      `${currentTime} - ${req.method} ${req.originalUrl} - ${statusCode} - ${timeColor}${time.toFixed(2)}ms\x1b[0m`
     );
   });
 

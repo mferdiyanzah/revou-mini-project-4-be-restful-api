@@ -56,7 +56,6 @@ const updateBookingStatus = async (req: Request, res: Response): Promise<void> =
     responseHandler(res, 200, "OK", true);
   } catch (er) {
     if (er instanceof Error) {
-      console.log(er);
       responseHandler(res, 400, er.message, false);
     }
   }

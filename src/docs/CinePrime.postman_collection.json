@@ -1,0 +1,1780 @@
+{
+	"info": {
+		"_postman_id": "c2f3894a-2bd0-4c83-952d-3958dad26f15",
+		"name": "CinePrime",
+		"description": "CinePrime is the best itw",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33418531"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\":\"user1\",\r\n    \"email\": \"user1@mail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host_v1}}/user/login",
+							"host": [
+								"{{host_v1}}"
+							],
+							"path": [
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\":\"user 2\",\r\n    \"password\":\"user 2\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_v1}}/user/login",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"user",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"code\": 200,\n    \"message\": \"User logged in successfully\",\n    \"data\": {\n        \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJlbWFpbCI6InVzZXI5QG1haWwuY29tIiwiaXNBZG1pbiI6MCwiaWF0IjoxNzE0NTY4NDAwLCJleHAiOjE3MTQ1NzIwMDB9.eSONgUCwPMk72_k5M96VX8cK0vliWyXa6PT1lkFGat4\"\n    }\n}"
+						},
+						{
+							"name": "400 Invalid Credentials",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"password\":\"user 1\",\r\n    \"email\": \"user1@mail.com\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_v1}}/user/login",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"user",
+										"login"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"code\": 401,\n    \"message\": \"Invalid credentials\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"user9\",\r\n    \"password\":\"user9\",\r\n    \"email\": \"user9@mail.com\",\r\n    \"is_admin\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host_v1}}/user/register",
+							"host": [
+								"{{host_v1}}"
+							],
+							"path": [
+								"user",
+								"register"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "201 Created",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\":\"user 2\",\r\n    \"password\":\"user 2\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_v1}}/user/login",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"user",
+										"login"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"User logged in successfully\",\n    \"data\": {\n        \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImVtYWlsIjoidXNlcjJAbWFpbC5jb20iLCJpYXQiOjE3MTMyNDU0MDAsImV4cCI6MTcxMzI0OTAwMH0.80wDna7zEJb534FMVJGK8Tz5n4RS8oc10q_3MmLldmw\"\n    },\n    \"code\": 200\n}"
+						},
+						{
+							"name": "409 User Already Exist",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\":\"user 1\",\r\n    \"password\":\"user 1\",\r\n    \"email\": \"user1@mail.com\",\r\n    \"is_admin\": 0\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_v1}}/user/register",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"user",
+										"register"
+									]
+								}
+							},
+							"status": "Conflict",
+							"code": 409,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n    \"success\": false,\r\n    \"code\": 409,\r\n    \"message\": \"User already exists\"\r\n}"
+						},
+						{
+							"name": "400 Bad Request",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\":\"user 1\",\r\n    \"password\":\"user 1\",\r\n    \"email\": \"user1@mail.com\",\r\n    \"is_admin\": 0\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_v1}}/user/register",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"user",
+										"register"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n    \"success\": false,\r\n    \"code\": 400,\r\n    \"message\": \"Username, email, and password are required\"\r\n}"
+						}
+					]
+				}
+			],
+			"description": "This is for auth"
+		},
+		{
+			"name": "Movies",
+			"item": [
+				{
+					"name": "Get All Movies",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJJZCI6NDg2OCwidXNlck5hbWUiOiJlZHdpbi5kaGFybWF3YW5AZGV4YWdyb3VwLmNvbSIsImVtcGxveWVlSWQiOiIxMDAwMDAyMzU2OCIsImZ1bGxOYW1lIjoiRWR3aW4gRGhhcm1hd2FuIiwiZW1haWwiOiJlZHdpbi5kaGFybWF3YW5AZGV4YWdyb3VwLmNvbSIsInJvbGVJZCI6MSwicm9sZUNvZGUiOiJBRE0iLCJpc1N1cGVydXNlciI6MX0sImlhdCI6MTcxMzMxODUyNSwiZXhwIjoxNzEzNDA0OTI1fQ.SXWxnzhnXETfJXzMz7DVBBvkqdciQOLN5OBEZ-J0sj4"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{host_v1}}/movie/all?limit=10&page=1&search=&sort=release_date&order=desc",
+							"host": [
+								"{{host_v1}}"
+							],
+							"path": [
+								"movie",
+								"all"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "search",
+									"value": ""
+								},
+								{
+									"key": "sort",
+									"value": "release_date"
+								},
+								{
+									"key": "order",
+									"value": "desc"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJJZCI6NDg2OCwidXNlck5hbWUiOiJlZHdpbi5kaGFybWF3YW5AZGV4YWdyb3VwLmNvbSIsImVtcGxveWVlSWQiOiIxMDAwMDAyMzU2OCIsImZ1bGxOYW1lIjoiRWR3aW4gRGhhcm1hd2FuIiwiZW1haWwiOiJlZHdpbi5kaGFybWF3YW5AZGV4YWdyb3VwLmNvbSIsInJvbGVJZCI6MSwicm9sZUNvZGUiOiJBRE0iLCJpc1N1cGVydXNlciI6MX0sImlhdCI6MTcxMzMxODUyNSwiZXhwIjoxNzEzNDA0OTI1fQ.SXWxnzhnXETfJXzMz7DVBBvkqdciQOLN5OBEZ-J0sj4"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{host_v1}}/movie/all?limit=10&page=1&search=&sort=release_date&order=desc",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"movie",
+										"all"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "10"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "search",
+											"value": ""
+										},
+										{
+											"key": "sort",
+											"value": "release_date"
+										},
+										{
+											"key": "order",
+											"value": "desc"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n    \"success\": true,\r\n    \"code\": 200,\r\n    \"message\": \"OK\",\r\n    \"data\": {\r\n        \"results\": [\r\n            {\r\n                \"id\": 44,\r\n                \"title\": \"Dune: Part Two\",\r\n                \"release_date\": \"2024-03-25T17:00:00.000Z\",\r\n                \"director\": \"James Cameroon\",\r\n                \"genre\": \"Fantasy\",\r\n                \"duration\": 130,\r\n                \"rating\": \"PG\",\r\n                \"overview\": \"In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission\"\r\n            },\r\n            {\r\n                \"id\": 41,\r\n                \"title\": \"Dune\",\r\n                \"release_date\": \"2024-03-25T17:00:00.000Z\",\r\n                \"director\": \"James Cameroon\",\r\n                \"genre\": \"Fantasy\",\r\n                \"duration\": 130,\r\n                \"rating\": \"PG\",\r\n                \"overview\": \"In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission\"\r\n            },\r\n            {\r\n                \"id\": 42,\r\n                \"title\": \"Dune\",\r\n                \"release_date\": \"2024-03-25T17:00:00.000Z\",\r\n                \"director\": \"James Cameroon\",\r\n                \"genre\": \"Fantasy\",\r\n                \"duration\": 130,\r\n                \"rating\": \"PG\",\r\n                \"overview\": \"In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission\"\r\n            },\r\n            {\r\n                \"id\": 43,\r\n                \"title\": \"Dune: Part Two\",\r\n                \"release_date\": \"2024-03-25T17:00:00.000Z\",\r\n                \"director\": \"James Cameroon\",\r\n                \"genre\": \"Fantasy\",\r\n                \"duration\": 130,\r\n                \"rating\": \"PG\",\r\n                \"overview\": \"In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission\"\r\n            },\r\n            {\r\n                \"id\": 6,\r\n                \"title\": \"Adaptive coherent support\",\r\n                \"release_date\": \"2022-10-25T17:00:00.000Z\",\r\n                \"director\": \"Kari Pollard\",\r\n                \"genre\": \"rest\",\r\n                \"duration\": 106,\r\n                \"rating\": \"PG\",\r\n                \"overview\": \"Difference of describe time peace goal. Those concern pretty force most which bring.\\nBlue leg allow company series. Season bank individual guy west per local. Heart trade produce economy.\"\r\n            },\r\n            {\r\n                \"id\": 7,\r\n                \"title\": \"Adaptive coherent support\",\r\n                \"release_date\": \"2022-10-25T17:00:00.000Z\",\r\n                \"director\": \"Kari Pollard\",\r\n                \"genre\": \"rest\",\r\n                \"duration\": 106,\r\n                \"rating\": \"PG\",\r\n                \"overview\": \"Difference of describe time peace goal. Those concern pretty force most which bring.\\nBlue leg allow company series. Season bank individual guy west per local. Heart trade produce economy.\"\r\n            },\r\n            {\r\n                \"id\": 13,\r\n                \"title\": \"Adaptive coherent support\",\r\n                \"release_date\": \"2022-10-25T17:00:00.000Z\",\r\n                \"director\": \"Kari Pollard\",\r\n                \"genre\": \"rest\",\r\n                \"duration\": 106,\r\n                \"rating\": \"PG\",\r\n                \"overview\": \"Difference of describe time peace goal. Those concern pretty force most which bring.\\nBlue leg allow company series. Season bank individual guy west per local. Heart trade produce economy.\"\r\n            },\r\n            {\r\n                \"id\": 9,\r\n                \"title\": \"Adaptive coherent support\",\r\n                \"release_date\": \"2022-10-25T17:00:00.000Z\",\r\n                \"director\": \"Kari Pollard\",\r\n                \"genre\": \"rest\",\r\n                \"duration\": 106,\r\n                \"rating\": \"PG\",\r\n                \"overview\": \"Difference of describe time peace goal. Those concern pretty force most which bring.\\nBlue leg allow company series. Season bank individual guy west per local. Heart trade produce economy.\"\r\n            },\r\n            {\r\n                \"id\": 10,\r\n                \"title\": \"Adaptive coherent support\",\r\n                \"release_date\": \"2022-10-25T17:00:00.000Z\",\r\n                \"director\": \"Kari Pollard\",\r\n                \"genre\": \"rest\",\r\n                \"duration\": 106,\r\n                \"rating\": \"PG\",\r\n                \"overview\": \"Difference of describe time peace goal. Those concern pretty force most which bring.\\nBlue leg allow company series. Season bank individual guy west per local. Heart trade produce economy.\"\r\n            },\r\n            {\r\n                \"id\": 11,\r\n                \"title\": \"Adaptive coherent support\",\r\n                \"release_date\": \"2022-10-25T17:00:00.000Z\",\r\n                \"director\": \"Kari Pollard\",\r\n                \"genre\": \"rest\",\r\n                \"duration\": 106,\r\n                \"rating\": \"PG\",\r\n                \"overview\": \"Difference of describe time peace goal. Those concern pretty force most which bring.\\nBlue leg allow company series. Season bank individual guy west per local. Heart trade produce economy.\"\r\n            }\r\n        ],\r\n        \"page\": 1,\r\n        \"limit\": 10\r\n    }\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Movie by ID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJJZCI6NDg2OCwidXNlck5hbWUiOiJlZHdpbi5kaGFybWF3YW5AZGV4YWdyb3VwLmNvbSIsImVtcGxveWVlSWQiOiIxMDAwMDAyMzU2OCIsImZ1bGxOYW1lIjoiRWR3aW4gRGhhcm1hd2FuIiwiZW1haWwiOiJlZHdpbi5kaGFybWF3YW5AZGV4YWdyb3VwLmNvbSIsInJvbGVJZCI6MSwicm9sZUNvZGUiOiJBRE0iLCJpc1N1cGVydXNlciI6MX0sImlhdCI6MTcxMzMxODUyNSwiZXhwIjoxNzEzNDA0OTI1fQ.SXWxnzhnXETfJXzMz7DVBBvkqdciQOLN5OBEZ-J0sj4"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{host_v1}}/movie/:id",
+							"host": [
+								"{{host_v1}}"
+							],
+							"path": [
+								"movie",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJJZCI6NDg2OCwidXNlck5hbWUiOiJlZHdpbi5kaGFybWF3YW5AZGV4YWdyb3VwLmNvbSIsImVtcGxveWVlSWQiOiIxMDAwMDAyMzU2OCIsImZ1bGxOYW1lIjoiRWR3aW4gRGhhcm1hd2FuIiwiZW1haWwiOiJlZHdpbi5kaGFybWF3YW5AZGV4YWdyb3VwLmNvbSIsInJvbGVJZCI6MSwicm9sZUNvZGUiOiJBRE0iLCJpc1N1cGVydXNlciI6MX0sImlhdCI6MTcxMzMxODUyNSwiZXhwIjoxNzEzNDA0OTI1fQ.SXWxnzhnXETfJXzMz7DVBBvkqdciQOLN5OBEZ-J0sj4"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{host_v1}}/movie/1",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"movie",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"code\": 200,\n    \"message\": \"OK\",\n    \"data\": {\n        \"title\": \"Dune\",\n        \"release_date\": \"2024-03-25T17:00:00.000Z\",\n        \"director\": \"James Cameroon\",\n        \"genre\": \"Fantasy\",\n        \"duration\": 130,\n        \"rating\": \"PG\",\n        \"overview\": \"In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission\",\n        \"actors\": [\n            \"Actor1\",\n            \"Actor2\"\n        ]\n    }\n}"
+						},
+						{
+							"name": "400 Movie not found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJJZCI6NDg2OCwidXNlck5hbWUiOiJlZHdpbi5kaGFybWF3YW5AZGV4YWdyb3VwLmNvbSIsImVtcGxveWVlSWQiOiIxMDAwMDAyMzU2OCIsImZ1bGxOYW1lIjoiRWR3aW4gRGhhcm1hd2FuIiwiZW1haWwiOiJlZHdpbi5kaGFybWF3YW5AZGV4YWdyb3VwLmNvbSIsInJvbGVJZCI6MSwicm9sZUNvZGUiOiJBRE0iLCJpc1N1cGVydXNlciI6MX0sImlhdCI6MTcxMzMxODUyNSwiZXhwIjoxNzEzNDA0OTI1fQ.SXWxnzhnXETfJXzMz7DVBBvkqdciQOLN5OBEZ-J0sj4"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{host_v1}}/movie/1",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"movie",
+										"1"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"code\": 400,\n    \"message\": \"Movie not found\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Now Playing",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host_v1}}/movie/now-playing",
+							"host": [
+								"{{host_v1}}"
+							],
+							"path": [
+								"movie",
+								"now-playing"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host_v1}}/movie/now-playing",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"movie",
+										"now-playing"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n    \"success\": true,\r\n    \"code\": 200,\r\n    \"message\": \"OK\",\r\n    \"data\": [\r\n        {\r\n            \"title\": \"Adaptive coherent support\",\r\n            \"release_date\": \"2022-10-25T17:00:00.000Z\",\r\n            \"director\": \"Kari Pollard\",\r\n            \"genre\": \"rest\",\r\n            \"rating\": \"PG\",\r\n            \"overview\": \"Difference of describe time peace goal. Those concern pretty force most which bring.\\nBlue leg allow company series. Season bank individual guy west per local. Heart trade produce economy.\",\r\n            \"show_time\": [\r\n                {\r\n                    \"id\": 49,\r\n                    \"show_time\": \"2024-05-01T20:00:00.000Z\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Add New Movie",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJlbWFpbCI6InVzZXI5QG1haWwuY29tIiwiaXNBZG1pbiI6MCwiaWF0IjoxNzE0NTY3NzMyLCJleHAiOjE3MTQ1NzEzMzJ9.78NO13x2UF9YdygoCKlwLiFy-t6yciQ6mqz7u1rw_yk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"title\": \"Adaptive coherent support\",\r\n        \"overview\": \"Difference of describe time peace goal. Those concern pretty force most which bring.\\nBlue leg allow company series. Season bank individual guy west per local. Heart trade produce economy.\",\r\n        \"duration\": 106,\r\n        \"director\": \"Kari Pollard\",\r\n        \"genre\": \"rest\",\r\n        \"rating\": \"PG\",\r\n        \"release_date\": \"2022-10-26\",\r\n        \"actors\": [1]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host_v1}}/movie/add",
+							"host": [
+								"{{host_v1}}"
+							],
+							"path": [
+								"movie",
+								"add"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "201 Created",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"title\": \"Adaptive coherent support\",\r\n        \"overview\": \"Difference of describe time peace goal. Those concern pretty force most which bring.\\nBlue leg allow company series. Season bank individual guy west per local. Heart trade produce economy.\",\r\n        \"duration\": 106,\r\n        \"director\": \"Kari Pollard\",\r\n        \"genre\": \"rest\",\r\n        \"rating\": \"PG\",\r\n        \"release_date\": \"2022-10-26\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_v1}}/movie/add",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"movie",
+										"add"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"code\": 201,\n    \"message\": \"Created\",\n    \"data\": {\n        \"id\": 48\n    }\n}"
+						},
+						{
+							"name": "403 Unauthorized",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"title\": \"Adaptive coherent support\",\r\n        \"overview\": \"Difference of describe time peace goal. Those concern pretty force most which bring.\\nBlue leg allow company series. Season bank individual guy west per local. Heart trade produce economy.\",\r\n        \"duration\": 106,\r\n        \"director\": \"Kari Pollard\",\r\n        \"genre\": \"rest\",\r\n        \"rating\": \"PG\",\r\n        \"release_date\": \"2022-10-26\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_v1}}/movie/add",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"movie",
+										"add"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"code\": 403,\n    \"message\": \"Unauthorized\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Movie by ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host_v1}}/movie/:id",
+							"host": [
+								"{{host_v1}}"
+							],
+							"path": [
+								"movie",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "230"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{host_v1}}/movie/:id",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"movie",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"code\": 200,\n    \"message\": \"OK\"\n}"
+						},
+						{
+							"name": "400 Movie not found",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{host_v1}}/movie/:id",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"movie",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"code\": 400,\n    \"message\": \"Movie not found\"\n}"
+						},
+						{
+							"name": "403 Unauthorized",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{host_v1}}/movie/:id",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"movie",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"code\": 403,\n    \"message\": \"Unauthorized\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Edit Movie By ID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"title\": \"Adaptive coherent supportyyyy\",\r\n        \"overview\": \"Difference of describe time peace goal. Those concern pretty force most which bring.\\nBlue leg allow company series. Season bank individual guy west per local. Heart trade produce economy.\",\r\n        \"duration\": 106,\r\n        \"director\": \"Kari Pollard\",\r\n        \"genre\": \"rest\",\r\n        \"rating\": \"PG\",\r\n        \"release_date\": \"2022-10-26\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host_v1}}/movie/:id",
+							"host": [
+								"{{host_v1}}"
+							],
+							"path": [
+								"movie",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"title\": \"Adaptive coherent supportyyyy\",\r\n        \"overview\": \"Difference of describe time peace goal. Those concern pretty force most which bring.\\nBlue leg allow company series. Season bank individual guy west per local. Heart trade produce economy.\",\r\n        \"duration\": 106,\r\n        \"director\": \"Kari Pollard\",\r\n        \"genre\": \"rest\",\r\n        \"rating\": \"PG\",\r\n        \"release_date\": \"2022-10-26\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_v1}}/movie/:id",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"movie",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n    \"success\": true,\r\n    \"code\": 200,\r\n    \"message\": \"OK\"\r\n}"
+						},
+						{
+							"name": "400 Movie not found",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"title\": \"Adaptive coherent supportyyyy\",\r\n        \"overview\": \"Difference of describe time peace goal. Those concern pretty force most which bring.\\nBlue leg allow company series. Season bank individual guy west per local. Heart trade produce economy.\",\r\n        \"duration\": 106,\r\n        \"director\": \"Kari Pollard\",\r\n        \"genre\": \"rest\",\r\n        \"rating\": \"PG\",\r\n        \"release_date\": \"2022-10-26\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_v1}}/movie/3",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"movie",
+										"3"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"code\": 400,\n    \"message\": \"Movie not found\"\n}"
+						},
+						{
+							"name": "403 Unauthorized",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"title\": \"Adaptive coherent supportyyyy\",\r\n        \"overview\": \"Difference of describe time peace goal. Those concern pretty force most which bring.\\nBlue leg allow company series. Season bank individual guy west per local. Heart trade produce economy.\",\r\n        \"duration\": 106,\r\n        \"director\": \"Kari Pollard\",\r\n        \"genre\": \"rest\",\r\n        \"rating\": \"PG\",\r\n        \"release_date\": \"2022-10-26\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_v1}}/movie/3",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"movie",
+										"3"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"code\": 401,\n    \"message\": \"Unauthorized\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Add Showtime",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"show_time\":\"2024-05-01 20:00:00\",\r\n    \"movie_id\":49,\r\n    \"price\":20\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host_v1}}/movie-showtime/add",
+							"host": [
+								"{{host_v1}}"
+							],
+							"path": [
+								"movie-showtime",
+								"add"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "201 Created",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"show_time\":\"2024-05-01 10:00:00\",\r\n    \"movie_id\":49,\r\n    \"price\":20\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_v1}}/movie-showtime/add",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"movie-showtime",
+										"add"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"code\": 201,\n    \"message\": \"Created\",\n    \"data\": {\n        \"id\": 31\n    }\n}"
+						},
+						{
+							"name": "400 Time Not Available",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"show_time\":\"2024-05-01 10:00:00\",\r\n    \"movie_id\":49,\r\n    \"price\":20\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_v1}}/movie-showtime/add",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"movie-showtime",
+										"add"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n    \"success\": false,\r\n    \"code\": 400,\r\n    \"message\": \"Show time is not available\"\r\n}"
+						},
+						{
+							"name": "403 Unauthorized",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"show_time\":\"2024-05-01 10:00:00\",\r\n    \"movie_id\":49,\r\n    \"price\":20\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_v1}}/movie-showtime/add",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"movie-showtime",
+										"add"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n    \"success\": false,\r\n    \"code\": 403,\r\n    \"message\": \"Unauthorized\"\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Edit Showtime",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"price\":100\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host_v1}}/movie-showtime/:id",
+							"host": [
+								"{{host_v1}}"
+							],
+							"path": [
+								"movie-showtime",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"status\":\"now_showing\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_v1}}/movie-showtime/22",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"movie-showtime",
+										"22"
+									]
+								}
+							},
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n    \"success\": true,\r\n    \"code\": 200,\r\n    \"message\": \"OK\"\r\n}"
+						},
+						{
+							"name": "400 Show time finished",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"status\":\"now_showing\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_v1}}/movie-showtime/22",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"movie-showtime",
+										"22"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n    \"success\": false,\r\n    \"code\": 400,\r\n    \"message\": \"Show time is finished\"\r\n}"
+						},
+						{
+							"name": "400 Show time not found",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"status\":\"now_showing\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_v1}}/movie-showtime/99",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"movie-showtime",
+										"99"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n    \"success\": false,\r\n    \"code\": 400,\r\n    \"message\": \"Show time not found\"\r\n}"
+						},
+						{
+							"name": "403 Unauthorized",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"price\":100\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_v1}}/movie-showtime/:id",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"movie-showtime",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"code\": 403,\n    \"message\": \"Unauthorized\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Booking",
+			"item": [
+				{
+					"name": "Booking Ticket",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"showtime_seat_id\": 71\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host_v1}}/booking/add",
+							"host": [
+								"{{host_v1}}"
+							],
+							"path": [
+								"booking",
+								"add"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"showtime_seat_id\": 20\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_v1}}/booking/add",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"booking",
+										"add"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"code\": 201,\n    \"message\": \"Created\",\n    \"data\": {\n        \"bookingId\": \"vTnbj_TEx\"\n    }\n}"
+						},
+						{
+							"name": "400 Seat is not found",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"showtime_seat_id\": 20\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_v1}}/booking/add",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"booking",
+										"add"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n    \"success\": false,\r\n    \"code\": 400,\r\n    \"message\": \"Seat is not available\"\r\n}"
+						},
+						{
+							"name": "401 Unauthenticated",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"showtime_seat_id\": 71\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_v1}}/booking/add",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"booking",
+										"add"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"code\": 401,\n    \"message\": \"Unauthenticated\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Booking History",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host_v1}}/booking/history",
+							"host": [
+								"{{host_v1}}"
+							],
+							"path": [
+								"booking",
+								"history"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host_v1}}/booking/history",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"booking",
+										"history"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"code\": 200,\n    \"message\": \"OK\",\n    \"data\": [\n        {\n            \"id\": 13,\n            \"booking_code\": \"dIlfmGUdv\",\n            \"movie_title\": \"Adaptive coherent support\",\n            \"show_time\": \"2024-05-01T13:00:00.000Z\",\n            \"price\": 100,\n            \"seat_number\": \"A2\",\n            \"status\": \"confirmed\"\n        },\n        {\n            \"id\": 14,\n            \"booking_code\": \"SJPeHgPE_\",\n            \"movie_title\": \"Adaptive coherent support\",\n            \"show_time\": \"2024-05-01T13:00:00.000Z\",\n            \"price\": 100,\n            \"seat_number\": \"A3\",\n            \"status\": \"pending\"\n        }\n    ]\n}"
+						},
+						{
+							"name": "401 Unauthenticated",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host_v1}}/booking/history",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"booking",
+										"history"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"code\": 401,\n    \"message\": \"Unauthenticated\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Booking Status",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{host_v1}}/booking/paid/:bookingId",
+							"host": [
+								"{{host_v1}}"
+							],
+							"path": [
+								"booking",
+								"paid",
+								":bookingId"
+							],
+							"variable": [
+								{
+									"key": "bookingId",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{host_v1}}/booking/:bookingId",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"booking",
+										":bookingId"
+									],
+									"variable": [
+										{
+											"key": "bookingId",
+											"value": ""
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"code\": 200,\n    \"message\": \"OK\"\n}"
+						},
+						{
+							"name": "400 Booking Expired",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{host_v1}}/booking/:bookingId",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"booking",
+										":bookingId"
+									],
+									"variable": [
+										{
+											"key": "bookingId",
+											"value": ""
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"code\": 400,\n    \"message\": \"Booking Expired\"\n}"
+						},
+						{
+							"name": "400 Booking not found",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{host_v1}}/booking/:bookingId",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"booking",
+										":bookingId"
+									],
+									"variable": [
+										{
+											"key": "bookingId",
+											"value": ""
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"code\": 400,\n    \"message\": \"Booking not found\"\n}"
+						},
+						{
+							"name": "401 Unauthenticated",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{host_v1}}/booking/paid/dIlfmGUdv",
+									"host": [
+										"{{host_v1}}"
+									],
+									"path": [
+										"booking",
+										"paid",
+										"dIlfmGUdv"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"code\": 401,\n    \"message\": \"Unauthenticated\"\n}"
+						}
+					]
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImVtYWlsIjoidXNlcmFkbWluQG1haWwuY29tIiwiaXNBZG1pbiI6MSwiaWF0IjoxNzE0NTcwMjkzLCJleHAiOjE3MTQ1NzM4OTN9.Jl5SAcBYWTyA8z53yPvMY8fYAoh-wNNEq1xz8QBKexQ",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host_v1",
+			"value": "localhost:3000/api/v1",
+			"type": "string"
+		}
+	]
+}

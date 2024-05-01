@@ -10,7 +10,6 @@ import routerV1 from "./routes";
 
 
 dotenv.config();
-console.log(dotenv.config());
 const app = express();
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));

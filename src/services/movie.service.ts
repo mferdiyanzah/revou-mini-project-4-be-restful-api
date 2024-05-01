@@ -61,7 +61,7 @@ const getMoviesNowPlaying = async (): Promise<GetAllMoviesResponse[]> => {
 
 const updateMovieById = async (id: string, updateMovieRequest: UpdateMovieRequest): Promise<void> => {
   const movie = await movieRepository.getMovieById(id);
-  if (movie === undefined) throw new Error("Movie not found");
+  if (movie.length === 0) throw new Error("Movie not found");
 
   await movieRepository.updateMovieById(id, updateMovieRequest);
 };
